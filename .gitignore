@@ -4,6 +4,7 @@
 Homestead.json
 Homestead.yaml
 
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
