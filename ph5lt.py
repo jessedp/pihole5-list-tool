@@ -38,7 +38,7 @@ from PyInquirer import prompt, Validator, ValidationError
 # from pprint import pprint
 
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 
 # CONSTANT LIKE THINGS
