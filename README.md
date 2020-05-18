@@ -10,8 +10,11 @@ Currently there are three _sources_ available to use:
 -  A file you have - one url per line
 -  Pasting in a list - one url per line
 
+After adding lists, they must be loaded by running `pihole -g`, which this will offer to do for you.
 
-The source of each list is visible in the web interface and an option to load the lists for immediate use is available after adding.
+You'll of course see each of them listed in the **Web Admin** interface along with a comment to help identify them
+
+
 
 ## requirements
 [python 3.6+](https://python.org/) is required. That is available by default on Raspbian, so it should be available on your system.
