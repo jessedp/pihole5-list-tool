@@ -69,9 +69,10 @@ urlLists = {
 
 def main():
     try:
-        print(color(f'\n    ┌──────────────────────────────────────────┐',fg='#b61042'))
-        print(color(f'    │       ', fg='#b61042') + color(f'π-hole 5 list tool  v.{__version__}', '#FFF') + color(f'        │    ', fg='#b61042'))
-        print(color(f'    └──────────────────────────────────────────┘\n', fg='#b61042'))
+        print(color('\n    ┌──────────────────────────────────────────┐', fg='#b61042'))
+        print(color('    │       ', fg='#b61042') +
+              color(f'π-hole 5 list tool  v.{__version__}', '#FFF') + color('        │    ', fg='#b61042'))
+        print(color('    └──────────────────────────────────────────┘\n', fg='#b61042'))
 
         config = askSetup()
         source = config['source']
@@ -135,9 +136,9 @@ def main():
                 exists += 1
             else:
                 added += 1
+                vals = (item['url'], item['comment'])
                 db.execute(
-                    'INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)',
-                    item['url'], item['comment'])
+                    'INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)', vals)
                 conn.commit()
 
         db.close()
