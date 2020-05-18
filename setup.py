@@ -17,7 +17,7 @@ with io.open("README.md") as readme:
         version=version(),
         author="jesse",
         author_email="jessedp@gmail.com",
-        description="Tool to add block/ad/ignore lists to pi-hole5",
+        description="A tool for quickly and easily bulk adding block lists to a Pi-hole 5 installation",
         long_description=readme.read(),
         long_description_content_type="text/markdown",
         url="https://github.com/jessedp/pihole5-list-tool",
