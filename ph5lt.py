@@ -38,7 +38,7 @@ from PyInquirer import prompt, Validator, ValidationError
 # from pprint import pprint
 
 
-__version__ = '0.1.9'
+__version__ = '0.2.0'
 
 
 # CONSTANT LIKE THINGS
@@ -68,92 +68,94 @@ urlLists = {
 
 
 def main():
-    print(color("""
-    +--------------------------------------+
-    |       pihole 5 list tool             |
-    +--------------------------------------+
-""", fg='lime'))
+    try:
+        print(color(f'\n    ┌──────────────────────────────────────────┐',fg='#b61042'))
+        print(color(f'    │       ', fg='#b61042') + color(f'π-hole 5 list tool  v.{__version__}', '#FFF') + color(f'        │    ', fg='#b61042'))
+        print(color(f'    └──────────────────────────────────────────┘\n', fg='#b61042'))
 
-    config = askSetup()
-    source = config['source']
-    dbFile = config['gravitydb']
+        config = askSetup()
+        source = config['source']
+        dbFile = config['gravitydb']
 
-    # Get imports from somewher
-    importList = []
+        # Get imports from somewher
+        importList = []
 
-    def validUrl(url):
-        parts = urlparse(url.strip())
-        return parts.scheme and parts.netloc
+        def validUrl(url):
+            parts = urlparse(url.strip())
+            return parts.scheme and parts.netloc
 
-    def processLines(data, comment):
-        newData = []
-        for line in data.strip().split("\n"):
-            line = line.strip()
-            if line == '':
-                continue
-            if not validUrl(line):
-                warn(f'Skipping: {line}')
-            else:
-                newData.append({'url': line, 'comment': comment})
-        return newData
+        def processLines(data, comment):
+            newData = []
+            for line in data.strip().split("\n"):
+                line = line.strip()
+                if line == '':
+                    continue
+                if not validUrl(line):
+                    warn(f'Skipping: {line}')
+                else:
+                    newData.append({'url': line, 'comment': comment})
+            return newData
 
-    if config['source'] in urlLists:
-        urlSource = urlLists[source]
-        resp = requests.get(urlSource['url'])
-        importList = processLines(resp.text, urlSource['comment'])
+        if config['source'] in urlLists:
+            urlSource = urlLists[source]
+            resp = requests.get(urlSource['url'])
+            importList = processLines(resp.text, urlSource['comment'])
 
-    if source == FILE:
-        choice = askImportFile()
-        file = choice['file']
-        f = open(file)
-        importList = processLines(f.read(), f'File: {file}')
+        if source == FILE:
+            choice = askImportFile()
+            file = choice['file']
+            f = open(file)
+            importList = processLines(f.read(), f'File: {file}')
 
-    if source == PASTE:
-        choice = askPaste()
-        importList = processLines(choice['content'], 'Pasted content')
+        if source == PASTE:
+            choice = askPaste()
+            importList = processLines(choice['content'], 'Pasted content')
 
-    if len(importList) == 0:
-        die('No valid urls found, try again')
+        if len(importList) == 0:
+            die('No valid urls found, try again')
 
-    choice = confirm(
-        f'Add {len(importList)} block lists to {dbFile}?')
+        choice = confirm(
+            f'Add {len(importList)} block lists to {dbFile}?')
 
-    if choice['confirm'] is True:
-        warn('Nothing changed. Bye!')
-        exit(0)
+        if choice['confirm'] is True:
+            warn('Nothing changed. Bye!')
+            exit(0)
 
-    conn = sqlite3.connect(config['gravitydb'])
-    db = conn.cursor()
-    added = 0
-    exists = 0
-    for item in importList:
-        db.execute(
-            "SELECT COUNT(*) FROM adlist WHERE address = ?", (item['url'],))
-
-        cnt = db.fetchone()
-
-        if cnt[0] > 0:
-            exists += 1
-        else:
-            added += 1
+        conn = sqlite3.connect(config['gravitydb'])
+        db = conn.cursor()
+        added = 0
+        exists = 0
+        for item in importList:
             db.execute(
-                'INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)',
-                item['url'], item['comment'])
-            conn.commit()
+                "SELECT COUNT(*) FROM adlist WHERE address = ?", (item['url'],))
 
-    db.close()
-    conn.close()
+            cnt = db.fetchone()
 
-    success(f'{added} block lists added! {exists} already existed.')
+            if cnt[0] > 0:
+                exists += 1
+            else:
+                added += 1
+                db.execute(
+                    'INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)',
+                    item['url'], item['comment'])
+                conn.commit()
 
-    choice = confirm('Update Gravity for immediate affect?')
-    if choice['confirm'] == 'y':
-        print()
-        os.system('pihole -g')
-    else:
-        info('Update Gravity through the web interface or by running:\n\t# pihole -g')
+        db.close()
+        conn.close()
 
-    info('\n\tBye!')
+        success(f'{added} block lists added! {exists} already existed.')
+
+        choice = confirm('Update Gravity for immediate affect?')
+        if choice['confirm'] == 'y':
+            print()
+            os.system('pihole -g')
+        else:
+            info('Update Gravity through the web interface or by running:\n\t# pihole -g')
+
+            info('\n\tBye!')
+
+    except (KeyboardInterrupt, KeyError):
+        exit(0)
 
 
 def warn(msg):
