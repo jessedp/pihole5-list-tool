@@ -3,3 +3,4 @@ PyInquirer
 autopep8
 flake8
 ansicolors
+twine
