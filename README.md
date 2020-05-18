@@ -1,4 +1,6 @@
 # pihole5-list-tool
+[![PyPI version](https://badge.fury.io/py/pihole5-list-tool.svg)](https://badge.fury.io/py/pihole5-list-tool)
+
 This tool allows quickly bulk adding __block lists__ to your [Pi-hole 5](https://pi-hole.net/) setup.
 
 
