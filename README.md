@@ -16,14 +16,19 @@ After adding lists, they must be loaded by running `pihole -g`, which this will 
 
 You'll of course see each of them listed in the **Web Admin** interface along with a comment to help identify them
 
+<b>NOTE:</b> If you need/want the blocklists added from [firebog.net](https://firebog.net/) (and more) continually maintained, check out [pihole-updatelists](https://github.com/jacklul/pihole-updatelists) which 
+will also run great on a Pi.
+
 
 
 ## requirements
-[python 3.6+](https://python.org/) is required. That is available by default on Raspbian, so it should be available on your system.
+- working [pi-hole 5.0](https://pi-hole.net) installation
+- [python 3.6+](https://python.org/) is required. That is available by default on at least Raspbian 10, so it should be available on your system.
 
 
 ## installation
-If you don't **sudo pip3 install**, things won't work - possibly in a very confusing way.
+If you don't **sudo pip3 install**, things won't work - possibly in a very confusing way. Definitely on Raspbian 10, so probably before that.
+
 ```bash
 $ sudo pip3 install pihole5-list-tool
 ```
