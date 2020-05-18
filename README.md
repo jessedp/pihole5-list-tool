@@ -23,7 +23,7 @@ You'll of course see each of them listed in the **Web Admin** interface along wi
 
 
 ## installation
-If you don't **sudo pip3 install**, things won't work in a confusing way.
+If you don't **sudo pip3 install**, things won't work - possibly in a very confusing way.
 ```bash
 $ sudo pip3 install pihole5-list-tool
 ```
