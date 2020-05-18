@@ -38,7 +38,7 @@ from PyInquirer import prompt, Validator, ValidationError
 # from pprint import pprint
 
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 
 
 # CONSTANT LIKE THINGS
@@ -118,7 +118,7 @@ def main():
         choice = confirm(
             f'Add {len(importList)} block lists to {dbFile}?')
 
-        if choice['confirm'] is True:
+        if not choice['confirm']:
             warn('Nothing changed. Bye!')
             exit(0)
 
@@ -147,7 +147,8 @@ def main():
         success(f'{added} block lists added! {exists} already existed.')
 
         choice = confirm('Update Gravity for immediate affect?')
-        if choice['confirm'] == 'y':
+
+        if choice['confirm']:
             print()
             os.system('pihole -g')
         else:
