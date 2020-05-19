@@ -32,7 +32,8 @@ with io.open("README.md") as readme:
         python_requires='>=3.6',
         install_requires=[
             'PyInquirer',
-            'ansicolors'
+            'ansicolors',
+            'requests'
         ],
         py_modules=['ph5lt'],
         entry_points={
