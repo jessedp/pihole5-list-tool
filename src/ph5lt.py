@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # Copyright (C) 2020 jessedp
 #
@@ -23,7 +24,7 @@
 # SOFTWARE.
 
 
-"""Makes bulk adding DNS blacklists to Pi-hole 5 a breaaze"""
+"""Makes bulk adding DNS blacklists and whitelists to Pi-hole 5 a breaaze"""
 
 
 import os
@@ -41,7 +42,7 @@ import constants
 # from pprint import pprint
 
 
-__version__ = '0.3.1'
+__version__ = '0.3.3'
 
 
 blackLists = {
