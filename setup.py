@@ -1,6 +1,6 @@
 import io
 import ast
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def version():
@@ -15,11 +15,13 @@ with io.open("README.md") as readme:
     setup(
         name="pihole5-list-tool",
         version=version(),
-        author="jesse",
+        author="jessedp",
         author_email="jessedp@gmail.com",
         description="A tool for quickly and easily bulk adding block lists to a Pi-hole 5 installation",
         long_description=readme.read(),
         long_description_content_type="text/markdown",
+        packages=find_packages(exclude=('tests', 'tests.*')),
+        include_package_data=True,
         url="https://github.com/jessedp/pihole5-list-tool",
         classifiers=[
             "Programming Language :: Python :: 3",
