@@ -14,7 +14,7 @@ build: clean-build #lint
 	
 
 lint:
-	autopep8 -i *.py
+	autopep8 --in-place src/ph5lt/*.py
 	flake8 --exclude=.tox *.py
 	#for when I'm a masochist
 	#pylint *.py
