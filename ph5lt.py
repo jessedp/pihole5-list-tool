@@ -32,38 +32,46 @@ from urllib.parse import urlparse
 import requests
 import sqlite3
 
+
 from colors import color
 from PyInquirer import prompt, Validator, ValidationError
+
+import constants
 
 # from pprint import pprint
 
 
-__version__ = '0.2.4'
+__version__ = '0.3.1'
 
 
-# CONSTANT LIKE THINGS
-defaultDb = '/etc/pihole/gravity.db'
-# SOURCES
-FIREBOG_NOCROSS = 1
-FIREBOG_TICKED = 2
-FIREBOG_ALL = 3
-FILE = 4
-PASTE = 5
-
-urlLists = {
-
-    FIREBOG_NOCROSS: {
+blackLists = {
+    constants.B_FIREBOG_NOCROSS: {
         'url': 'https://v.firebog.net/hosts/lists.php?type=nocross',
         'comment': 'Firebog | Non-crossed lists',
     },
-    FIREBOG_ALL: {
+    constants.B_FIREBOG_ALL: {
         'url': 'https://v.firebog.net/hosts/lists.php?type=all',
         'comment': 'Firebog | All lists',
     },
-    FIREBOG_TICKED: {
+    constants.B_FIREBOG_TICKED: {
         'url': 'https://v.firebog.net/hosts/lists.php?type=tick',
         'comment': 'Firebog | Ticked lists',
     }
+}
+
+whiteLists = {
+    constants.W_ANUDEEP_WHITE: {
+        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
+        'comment': 'AndeepND | Whitelist Only - Domains that are safe to whitelist i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, videos on news sites and so on.',
+    },
+    constants.W_ANUDEEP_REFERRAL: {
+        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
+        'comment': "AndeepND | Whitelist+Referral - People who use services like Slickdeals and Fatwallet need a few sites (most of them are either trackers or ads) to be whitelisted to work properly. This contains some analytics and ad serving sites like doubleclick.net and others. If you don't know what these services are, stay away from this list.	Domains that are safe to whitelist i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, videos on news sites and so on.",
+    },
+    constants.W_ANUDEEP_OPTIONAL: {
+        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
+        'comment': "AndeepND | Whitelist+Optional - These are needed depending on the service you use. It may contain some tracking site but sometimes it's necessary to add bad domains to make a few services to work.",
+    },
 }
 
 
@@ -74,9 +82,13 @@ def main():
               color(f'π-hole 5 list tool  v.{__version__}', '#FFF') + color('        │    ', fg='#b61042'))
         print(color('    └──────────────────────────────────────────┘\n', fg='#b61042'))
 
-        config = askSetup()
-        source = config['source']
-        dbFile = config['gravitydb']
+        result = askDb()
+        dbFile = result['gravitydb']
+
+        result = askListType()
+        type = result['listType']
+        result = askBlacklist()
+        source = result['source']
 
         # Get imports from somewher
         importList = []
@@ -97,8 +109,8 @@ def main():
                     newData.append({'url': line, 'comment': comment})
             return newData
 
-        if config['source'] in urlLists:
-            urlSource = urlLists[source]
+        if config['source'] in blackLists:
+            urlSource = blackLists[source]
             resp = requests.get(urlSource['url'])
             importList = processLines(resp.text, urlSource['comment'])
 
@@ -191,17 +203,52 @@ def keyPrompt(questions):
     return resp
 
 
-def askSetup():
+def askDb():
     questions = [
         {
             'name': 'gravitydb',
                     'type': 'input',
-                    'default': defaultDb,
+                    'default': constants.defaultDb,
                     'message': 'Gravity Db to Update:',
                     'validate': lambda answer: f'Please enter a valid file name or nothing for {defaultDb} {answer}.'
             if answer.strip() != '' and not os.path.exists(answer) else True
 
-        },
+        }
+    ]
+
+    return keyPrompt(questions)
+
+
+def askListType():
+    questions = [
+        {
+            'name': 'listType',
+                    'type': 'list',
+                    'default': 'black',
+                    'message': 'Add Blacklists or Whitelist?',
+                    'choices': [
+                        {
+                            'name':
+                            'Blacklists',
+                            'value': constants.BLACKLIST,
+                            'short': 'Blacklists',
+                        },
+                        {
+                            'name':
+                            'Whitelists',
+                            'value': constants.WHITELIST,
+                            'short': 'Whitelists',
+                        },
+                    ],
+
+        }
+    ]
+
+    return keyPrompt(questions)
+
+
+def askBlacklist():
+    questions = [
         {
             'name': 'source',
                     'type': 'list',
@@ -210,32 +257,32 @@ def askSetup():
                         {
                             'name':
                             'Firebog | Non-crossed lists: For when someone is usually around to whitelist falsely blocked sites',
-                            'value': FIREBOG_NOCROSS,
+                            'value': constants.B_FIREBOG_NOCROSS,
                             'short': 'Firebog (no cross)',
                         },
                         {
                             'name':
                             'Firebog | Ticked lists: For when installing Pi-hole where no one will be whitelisting falsely blocked sites',
-                            'value': FIREBOG_TICKED,
+                            'value': constants.B_FIREBOG_TICKED,
                             'short': 'Firebog (ticked)',
                         },
                         {
                             'name': 'Firebog | All lists: For those who will always be around to whitelist falsely blocked sites',
-                            'value': FIREBOG_ALL,
+                            'value': constants.B_FIREBOG_ALL,
                             'short': 'Firebog (all)',
                         },
                         {
                             'name': 'File    | A file with urls of lists, 1 per line',
-                            'value': FILE,
+                            'value': constants.FILE,
                             'short': 'File',
                         },
                         {
                             'name': 'Paste   | Paste urls of lists, 1 per line - opens editor, save, close',
-                            'value': PASTE,
+                            'value': constants.PASTE,
                             'short': 'Paste',
                         },
-                    ],
-        },
+                    ]
+        }
     ]
 
     return keyPrompt(questions)
@@ -248,7 +295,7 @@ def askImportFile():
             'type': 'input',
             'message': 'File to import',
             'validate': lambda value: 'Please enter a valid file name.' if not os.path.exists(value) else True
-        },
+        }
     ]
 
     return keyPrompt(questions)
@@ -267,8 +314,7 @@ def askPaste():
                 'ext': '.tmp'
             },
 
-
-        },
+        }
     ]
     return keyPrompt(questions)
 
@@ -280,7 +326,7 @@ def confirm(message):
             'type': 'confirm',
             'message': message,
             'default': 'y',
-        },
+        }
     ]
     return keyPrompt(questions)
 
