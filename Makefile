@@ -9,14 +9,15 @@ clean-build:
 	rm --force --recursive __pycache__/
 	rm --force --recursive *.egg-info
 
-build: clean-build #lint
+build: clean-build lint
 	# pyi-makespec  --onefile pihole5-list-tool.py
 	
 
 lint:
-	autopep8 --in-place src/*.py
+	autopep8 -i -r .
 	flake8 --exclude=.tox *.py
-	pylint src/*.py
+	# disabled b/c I'm stubborn and want dashes in pacakge name
+	pylint *.py
 
 test: clean-pyc
 	py.test --verbose --color=yes $(TEST_PATH)
