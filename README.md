@@ -1,7 +1,7 @@
 # pihole5-list-tool
 [![PyPI version](https://badge.fury.io/py/pihole5-list-tool.svg)](https://badge.fury.io/py/pihole5-list-tool)
 
-This tool allows quickly bulk adding __Whitelists__ and __Black/Block/Ad lists__ to your [Pi-hole 5](https://pi-hole.net/) setup.
+This tool allows quickly and easily bulk adding __Whitelists__ and __Black/Block/Ad lists__ to your [Pi-hole 5](https://pi-hole.net/) setup.
 
 
 #### Whitelists
@@ -23,9 +23,9 @@ Currently the only source for maintained whitelists is [anudeepND's whitelist](h
 
 #### Ad/Block/Blacklist
 Currently the only source for maintained blacklists is [firebog.net](https://firebog.net/)
-- Non-crossed lists: For when someone is usually around to whitelist falsely blocked sites
-- Ticked lists: For when installing Pi-hole where no one will be whitelisting falsely blocked sites
-- All lists: For those who will always be around to whitelist falsely blocked sites
+- __Non-crossed lists__: For when someone is usually around to whitelist falsely blocked sites
+- __Ticked lists__: For when installing Pi-hole where no one will be whitelisting falsely blocked sites
+- __All lists__: For those who will always be around to whitelist falsely blocked sites
 
 #### File/Paste 
 Both list types allow providing either a __pasted in list__ or a __file__ as your source of lists.
