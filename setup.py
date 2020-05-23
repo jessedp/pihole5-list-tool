@@ -17,7 +17,7 @@ with io.open("README.md") as readme:
         version=version(),
         author="jessedp",
         author_email="jessedp@gmail.com",
-        description="A tool for quickly and easily bulk adding block lists to a Pi-hole 5 installation",
+        description="A tool for quickly and easily bulk adding whitelists and ad/block/blacklists to a Pi-hole 5 installation",
         long_description=readme.read(),
         long_description_content_type="text/markdown",
         package_dir="",
