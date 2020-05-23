@@ -62,15 +62,21 @@ blackLists = {
 whiteLists = {
     constants.W_ANUDEEP_WHITE: {
         'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
-        'comment': "AndeepND | Whitelist Only - Domains that are safe to whitelist i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, videos on news sites and so on.",
+        'comment': "AndeepND | Whitelist Only - Domains that are safe to whitelist i.e does not contain any tracking or advertising sites. " +
+                   "This fixes many problems like YouTube watch history, videos on news sites and so on.",
     },
     constants.W_ANUDEEP_REFERRAL: {
         'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
-        'comment': "AndeepND | Whitelist+Referral - People who use services like Slickdeals and Fatwallet need a few sites (most of them are either trackers or ads) to be whitelisted to work properly. This contains some analytics and ad serving sites like doubleclick.net and others. If you don't know what these services are, stay away from this list.	Domains that are safe to whitelist i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, videos on news sites and so on.",
+        'comment': "AndeepND | Whitelist+Referral - People who use services like Slickdeals and Fatwallet need a few sites (most of them are " +
+                   "either trackers or ads) to be whitelisted to work properly. This contains some analytics and ad serving sites like " +
+                   "doubleclick.net and others. If you don't know what these services are, stay away from this list.	Domains that are safe " +
+                   "to whitelist i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, " +
+                   "videos on news sites and so on.",
     },
     constants.W_ANUDEEP_OPTIONAL: {
         'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
-        'comment': "AndeepND | Whitelist+Optional - These are needed depending on the service you use. It may contain some tracking site but sometimes it's necessary to add bad domains to make a few services to work.",
+        'comment': "AndeepND | Whitelist+Optional - These are needed depending on the service you use. It may contain some tracking site but " +
+                   "sometimes it's necessary to add bad domains to make a few services to work.",
     },
 }
 
@@ -83,12 +89,12 @@ def main():
               color(f'π-hole 5 list tool  v.{__version__}', '#FFF') + color('        │    ', fg='#b61042'))
         print(color('    └──────────────────────────────────────────┘\n', fg='#b61042'))
 
-        result = inquirer.askDb()
+        result = inquirer.ask_db()
         db_file = result['gravitydb']
 
-        result = inquirer.askListType()
+        result = inquirer.ask_list_type()
         list_type = result['listType']
-        result = inquirer.askBlacklist()
+        result = inquirer.ask_blacklist()
         source = result['source']
 
         # Get imports from somewher
@@ -116,7 +122,7 @@ def main():
             import_list = process_lines(resp.text, url_source['comment'])
 
         if source == constants.FILE:
-            choice = inquirer.askImportFile()
+            choice = inquirer.ask_import_file()
             fname = choice['file']
 
             import_file = open(fname)
@@ -124,7 +130,7 @@ def main():
             import_list = process_lines(import_file, f'File: {fname}')
 
         if source == constants.PASTE:
-            choice = inquirer.askPaste()
+            choice = inquirer.ask_paste()
             import_list = process_lines(choice['content'], 'Pasted content')
 
         if len(import_list) == 0:
