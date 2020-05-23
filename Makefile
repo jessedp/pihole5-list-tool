@@ -14,10 +14,10 @@ build: clean-build #lint
 	
 
 lint:
-	autopep8 --in-place src/ph5lt/*.py
+	autopep8 --in-place src/*.py
 	flake8 --exclude=.tox *.py
 	#for when I'm a masochist
-	#pylint *.py
+	pylint src/*.py
 
 test: clean-pyc
 	py.test --verbose --color=yes $(TEST_PATH)
