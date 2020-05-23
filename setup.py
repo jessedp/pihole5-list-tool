@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 def version():
     """Return version string."""
-    with io.open('src/ph5lt.py') as input_file:
+    with io.open('ph5lt.py') as input_file:
         for line in input_file:
             if line.startswith('__version__'):
                 return ast.parse(line).body[0].value.s
@@ -20,10 +20,8 @@ with io.open("README.md") as readme:
         description="A tool for quickly and easily bulk adding block lists to a Pi-hole 5 installation",
         long_description=readme.read(),
         long_description_content_type="text/markdown",
-        packages_dir="src",
-        package_dir={'': 'src'},
-        packages=find_packages(where=('src'), exclude=('tests', 'tests.*')),
-        include_package_data=True,
+        package_dir="",
+        packages=find_packages(exclude=('tests', 'tests.*')),
         url="https://github.com/jessedp/pihole5-list-tool",
         classifiers=[
             "Programming Language :: Python :: 3",
@@ -39,7 +37,7 @@ with io.open("README.md") as readme:
             'ansicolors',
             'requests'
         ],
-        py_modules=['ph5lt', 'constants'],
+        py_modules=['ph5lt', 'inquirer', 'constants', 'utils'],
         entry_points={
             'console_scripts': ['pihole5-list-tool = ph5lt:main']
         },
