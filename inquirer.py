@@ -1,6 +1,6 @@
 """ prompts for inquirer """
 import os
-from PyInquirer import prompt, Validator, ValidationError
+from PyInquirer import prompt, Validator, ValidationError, Separator
 import constants
 
 
@@ -48,7 +48,7 @@ def ask_list_type():
             'name': 'listType',
             'type': 'list',
             'default': 'black',
-            'message': 'Add Blacklists or Whitelist?',
+            'message': 'Add Blacklists or Whitelists?',
             'choices': [
                 {
                     'name':
@@ -81,21 +81,25 @@ def ask_blacklist():
             'choices': [
                 {
                     'name':
-                    'Firebog | Non-crossed lists: For when someone is usually around to whitelist falsely blocked sites',
+                    """Firebog | Non-crossed lists : Use when someone is usually around to whitelist
+             falsely blocked sites""",
                     'value': constants.B_FIREBOG_NOCROSS,
                     'short': 'Firebog (no cross)',
                 },
                 {
                     'name':
-                    'Firebog | Ticked lists: For when installing Pi-hole where no one will be whitelisting falsely blocked sites',
+                    """Firebog | Ticked lists : Use where no one will be whitelisting falsely
+             blocked sites""",
                     'value': constants.B_FIREBOG_TICKED,
                     'short': 'Firebog (ticked)',
                 },
                 {
-                    'name': 'Firebog | All lists: For those who will always be around to whitelist falsely blocked sites',
+                    'name': """Firebog | All lists : Use when someone will always be around to
+             whitelist falsely blocked sites""",
                     'value': constants.B_FIREBOG_ALL,
                     'short': 'Firebog (all)',
                 },
+                Separator(),
                 {
                     'name': 'File    | A file with urls of lists, 1 per line',
                     'value': constants.FILE,
@@ -103,6 +107,64 @@ def ask_blacklist():
                 },
                 {
                     'name': 'Paste   | Paste urls of lists, 1 per line - opens editor, save, close',
+                    'value': constants.PASTE,
+                    'short': 'Paste',
+                },
+            ]
+        }
+    ]
+
+    result = key_prompt(questions)
+    return result['source']
+
+
+def ask_whitelist():
+    """ prompt for which blacklist to use """
+    questions = [
+        {
+            'name': 'source',
+            'type': 'list',
+            'message': 'Where are the whitelists coming from?',
+            'choices': [
+                {
+                    'name':
+                    """AnudeepND | Whitelist Only :
+        Domains that are safe to whitelist i.e does not contain any tracking or
+        advertising sites. This fixes many problems like YouTube watch history,
+        videos on news sites and so on.""",
+                    'value': constants.W_ANUDEEP_WHITE,
+                    'short': 'AnudeepND (Whitelist)',
+                },
+
+                {
+                    'name': """AnudeepND | Whitelist+Optional :
+        These are needed depending on the service you use. They may contain some
+        tracking site but sometimes it's necessary to add bad domains to make a
+        few services to work.""",
+                    'value': constants.W_ANUDEEP_OPTIONAL,
+                    'short': '"AndueepND (Whitelist+Optional)',
+                },
+                {
+                    'name':
+                    """AnudeepND | Whitelist+Referral :
+        People who use services like Slickdeals and Fatwallet need a few sites
+        (most of them are either trackers or ads) to be whitelisted to work
+        properly. This contains some analytics and ad serving sites like
+        doubleclick.net and others. If you don't know what these services are,
+        stay away from this list. Domains that are safe to whitelist i.e does
+        not contain any tracking or advertising sites. This fixes many problems
+        like YouTube watch history, videos on news sites and so on.""",
+                    'value': constants.W_ANUDEEP_REFERRAL,
+                    'short': 'AndeepND (Whitelist+Referral)',
+                },
+                Separator(),
+                {
+                    'name': 'File      | A file with urls of lists, 1 per line',
+                    'value': constants.FILE,
+                    'short': 'File',
+                },
+                {
+                    'name': 'Paste     | Paste urls of lists, 1 per line - opens editor, save, close',
                     'value': constants.PASTE,
                     'short': 'Paste',
                 },

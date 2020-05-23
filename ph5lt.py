@@ -40,7 +40,7 @@ import constants
 import inquirer
 import utils
 
-__version__ = '0.3.3'
+__version__ = '0.3.0'
 
 
 blackLists = {
@@ -58,24 +58,19 @@ blackLists = {
     }
 }
 
+ANUDEEP_WHITELIST = 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt'
 whiteLists = {
     constants.W_ANUDEEP_WHITE: {
-        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
-        'comment': "AndeepND | Whitelist Only - Domains that are safe to whitelist i.e does not contain any tracking or advertising sites. " +
-                   "This fixes many problems like YouTube watch history, videos on news sites and so on.",
+        'url': ANUDEEP_WHITELIST,
+        'comment': "AndeepND | Whitelist Only",
     },
     constants.W_ANUDEEP_REFERRAL: {
-        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
-        'comment': "AndeepND | Whitelist+Referral - People who use services like Slickdeals and Fatwallet need a few sites (most of them are " +
-                   "either trackers or ads) to be whitelisted to work properly. This contains some analytics and ad serving sites like " +
-                   "doubleclick.net and others. If you don't know what these services are, stay away from this list.	Domains that are safe " +
-                   "to whitelist i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, " +
-                   "videos on news sites and so on.",
+        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/referral-sites.txt',
+        'comment': "AndeepND | Whitelist+Referral",
     },
     constants.W_ANUDEEP_OPTIONAL: {
-        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt',
-        'comment': "AndeepND | Whitelist+Optional - These are needed depending on the service you use. It may contain some tracking site but " +
-                   "sometimes it's necessary to add bad domains to make a few services to work.",
+        'url': 'https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/optional-list.txt',
+        'comment': "AndeepND | Whitelist+Optional",
     },
 }
 
@@ -83,10 +78,14 @@ whiteLists = {
 def main():
     """main method"""
     try:
-        print(color('\n    ┌──────────────────────────────────────────┐', fg='#b61042'))
+        utils.clear()
+        print(color('    ┌──────────────────────────────────────────┐', fg='#b61042'))
         print(color('    │       ', fg='#b61042') +
-              color(f'π-hole 5 list tool  v.{__version__}', '#FFF') + color('        │    ', fg='#b61042'))
-        print(color('    └──────────────────────────────────────────┘\n', fg='#b61042'))
+              color(f'π-hole 5 list tool  v{__version__}', '#FFF') + color('         │', fg='#b61042'))
+        print(color('    └──────────────────────────────────────────┘', fg='#b61042'))
+        utils.info('    https://github.com/jessedp/pihole5-list-tool\n')
+        utils.danger('    Do not hit ENTER or Y if a step seems to hang!')
+        utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
 
         db_file = inquirer.ask_db()
 
@@ -163,10 +162,68 @@ def process_blacklists(db_file):
 
     utils.success(f'{added} block lists added! {exists} already existed.')
 
+
+def process_whitelists(db_file):
+    """ prompt for and process blacklists """
+    source = inquirer.ask_whitelist()
+
+    import_list = []
+
+    if source in whiteLists:
+        url_source = whiteLists[source]
+        resp = requests.get(url_source['url'])
+        import_list = utils.process_lines(resp.text, url_source['comment'], False)
+        # This breaks if we add a new whitelist setup
+        if source != ANUDEEP_WHITELIST:
+            resp = requests.get(ANUDEEP_WHITELIST)
+            import_list += utils.process_lines(resp.text, url_source['comment'], False)
+
+    if source == constants.FILE:
+        fname = inquirer.ask_import_file()
+        import_file = open(fname)
+        import_list = utils.process_lines(import_file.read(), f'File: {fname}', False)
+
+    if source == constants.PASTE:
+        import_list = inquirer.ask_paste()
+        import_list = utils.process_lines(import_list, 'Pasted content', utils.validate_host)
+
+    if len(import_list) == 0:
+        utils.die('No valid urls found, try again')
+
+    if not inquirer.confirm(f'Add {len(import_list)} white lists to {db_file}?'):
+        utils.warn('Nothing changed. Bye!')
+        sys.exit(0)
+
+    conn = sqlite3.connect(db_file)
+    sqldb = conn.cursor()
+    added = 0
+    exists = 0
+    for item in import_list:
+        sqldb.execute(
+            "SELECT COUNT(*) FROM domainlist WHERE domain = ?",
+            (item['url'],))
+
+        cnt = sqldb.fetchone()
+
+        if cnt[0] > 0:
+            exists += 1
+        else:
+            # 0 = exact whitelist
+            # 2 = regex whitelist
+            domain_type = 0
+            if item['type'] == constants.REGEX:
+                domain_type = 2
+
+            vals = (item['url'], domain_type, item['comment'])
+            sqldb.execute(
+                'INSERT OR IGNORE INTO domainlist (domain, type, comment) VALUES (?,?,?)', vals)
+            conn.commit()
+            added += 1
+
     sqldb.close()
     conn.close()
 
-    utils.success(f'{added} block lists added! {exists} already existed.')
+    utils.success(f'{added} whitelists added! {exists} already existed.')
 
 
 if __name__ == "__main__":

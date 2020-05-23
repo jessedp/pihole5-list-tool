@@ -1,9 +1,12 @@
 """Constant like things"""
-
 DEFAULT_DB = '/etc/pihole/gravity.db'
 
 BLACKLIST = 1
 WHITELIST = 2
+
+# item types
+URL = 1
+REGEX = 2
 
 
 FILE = 100
