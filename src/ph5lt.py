@@ -29,7 +29,6 @@
 
 import os
 import sys
-from urllib.parse import urlparse
 import sqlite3
 import requests
 
@@ -89,88 +88,17 @@ def main():
               color(f'π-hole 5 list tool  v.{__version__}', '#FFF') + color('        │    ', fg='#b61042'))
         print(color('    └──────────────────────────────────────────┘\n', fg='#b61042'))
 
-        result = inquirer.ask_db()
-        db_file = result['gravitydb']
+        db_file = inquirer.ask_db()
 
-        result = inquirer.ask_list_type()
-        list_type = result['listType']
-        result = inquirer.ask_blacklist()
-        source = result['source']
+        list_type = inquirer.ask_list_type()
 
-        # Get imports from somewher
-        import_list = []
+        if list_type == constants.BLACKLIST:
+            process_blacklists(db_file)
 
-        def valid_url(url):
-            parts = urlparse(url.strip())
-            return parts.scheme and parts.netloc
+        if list_type == constants.WHITELIST:
+            process_whitelists(db_file)
 
-        def process_lines(data, comment):
-            new_data = []
-            for line in data.strip().split("\n"):
-                line = line.strip()
-                if line == '':
-                    continue
-                if not valid_url(line):
-                    utils.warn(f'Skipping: {line}')
-                else:
-                    new_data.append({'url': line, 'comment': comment})
-            return new_data
-
-        if result['source'] in blackLists:
-            url_source = blackLists[source]
-            resp = requests.get(url_source['url'])
-            import_list = process_lines(resp.text, url_source['comment'])
-
-        if source == constants.FILE:
-            choice = inquirer.ask_import_file()
-            fname = choice['file']
-
-            import_file = open(fname)
-
-            import_list = process_lines(import_file, f'File: {fname}')
-
-        if source == constants.PASTE:
-            choice = inquirer.ask_paste()
-            import_list = process_lines(choice['content'], 'Pasted content')
-
-        if len(import_list) == 0:
-            utils.die('No valid urls found, try again')
-
-        choice = inquirer.confirm(
-            f'Add {len(import_list)} block lists to {db_file}?')
-
-        if not choice['confirm']:
-            utils.warn('Nothing changed. Bye!')
-            sys.exit(0)
-
-        conn = sqlite3.connect(db_file)
-        sqldb = conn.cursor()
-        added = 0
-        exists = 0
-        for item in import_list:
-            sqldb.execute(
-                "SELECT COUNT(*) FROM adlist WHERE address = ?",
-                (item['url'],))
-
-            cnt = sqldb.fetchone()
-
-            if cnt[0] > 0:
-                exists += 1
-            else:
-                added += 1
-                vals = (item['url'], item['comment'])
-                sqldb.execute(
-                    'INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)', vals)
-                conn.commit()
-
-        sqldb.close()
-        conn.close()
-
-        utils.success(f'{added} block lists added! {exists} already existed.')
-
-        choice = inquirer.confirm('Update Gravity for immediate affect?')
-
-        if choice['confirm']:
+        if inquirer.confirm('Update Gravity for immediate affect?'):
             print()
             os.system('pihole -g')
         else:
@@ -181,6 +109,64 @@ def main():
 
     except (KeyboardInterrupt, KeyError):
         sys.exit(0)
+
+
+def process_blacklists(db_file):
+    """ prompt for and process blacklists """
+    source = inquirer.ask_blacklist()
+
+    import_list = []
+
+    if source in blackLists:
+        url_source = blackLists[source]
+        resp = requests.get(url_source['url'])
+        import_list = utils.process_lines(resp.text, url_source['comment'])
+
+    if source == constants.FILE:
+        fname = inquirer.ask_import_file()
+        import_file = open(fname)
+        import_list = utils.process_lines(import_file, f'File: {fname}')
+
+    if source == constants.PASTE:
+        import_list = inquirer.ask_paste()
+        import_list = utils.process_lines(import_list, 'Pasted content')
+
+    if len(import_list) == 0:
+        utils.die('No valid urls found, try again')
+
+    if not inquirer.confirm(f'Add {len(import_list)} block lists to {db_file}?'):
+        utils.warn('Nothing changed. Bye!')
+        sys.exit(0)
+
+    conn = sqlite3.connect(db_file)
+    sqldb = conn.cursor()
+    added = 0
+    exists = 0
+    for item in import_list:
+        sqldb.execute(
+            "SELECT COUNT(*) FROM adlist WHERE address = ?",
+            (item['url'],))
+
+        cnt = sqldb.fetchone()
+
+        if cnt[0] > 0:
+            exists += 1
+        else:
+            added += 1
+            vals = (item['url'], item['comment'])
+            sqldb.execute(
+                'INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)', vals)
+            conn.commit()
+
+    sqldb.close()
+    conn.close()
+
+    utils.success(f'{added} block lists added! {exists} already existed.')
+
+    sqldb.close()
+    conn.close()
+
+    utils.success(f'{added} block lists added! {exists} already existed.')
 
 
 if __name__ == "__main__":

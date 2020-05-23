@@ -37,8 +37,8 @@ def ask_db():
 
         }
     ]
-
-    return key_prompt(questions)
+    result = key_prompt(questions)
+    return result['gravitydb']
 
 
 def ask_list_type():
@@ -67,7 +67,8 @@ def ask_list_type():
         }
     ]
 
-    return key_prompt(questions)
+    result = key_prompt(questions)
+    return result['listType']
 
 
 def ask_blacklist():
@@ -109,7 +110,8 @@ def ask_blacklist():
         }
     ]
 
-    return key_prompt(questions)
+    result = key_prompt(questions)
+    return result['source']
 
 
 def ask_import_file():
@@ -122,7 +124,8 @@ def ask_import_file():
             'validate': lambda value: 'Please enter a valid file name.' if not os.path.exists(value) else True
         }
     ]
-    return key_prompt(questions)
+    result = key_prompt(questions)
+    return result['file']
 
 
 def ask_paste():
@@ -141,7 +144,8 @@ def ask_paste():
 
         }
     ]
-    return key_prompt(questions)
+    result = key_prompt(questions)
+    return result['content']
 
 
 def confirm(message):
@@ -154,4 +158,5 @@ def confirm(message):
             'default': 'y',
         }
     ]
-    return key_prompt(questions)
+    result = key_prompt(questions)
+    return result['confirm']
