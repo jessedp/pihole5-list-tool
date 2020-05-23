@@ -11,7 +11,7 @@ Currently the only source for maintained whitelists is [anudeepND's whitelist](h
         advertising sites. This fixes many problems like YouTube watch history,
         videos on news sites and so on.
 - __Whitelist+Optional__ - These are needed depending on the service you use. They may contain some
-        tracking site but sometimes it's necessary to add bad domains to make a
+        tracking sites but sometimes it's necessary to add bad domains to make a
         few services to work.
 - __Whitelist+Referral__ - People who use services like Slickdeals and Fatwallet need a few sites
         (most of them are either trackers or ads) to be whitelisted to work

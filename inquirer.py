@@ -139,7 +139,7 @@ def ask_whitelist():
                 {
                     'name': """AnudeepND | Whitelist+Optional :
         These are needed depending on the service you use. They may contain some
-        tracking site but sometimes it's necessary to add bad domains to make a
+        tracking sites but sometimes it's necessary to add bad domains to make a
         few services to work.""",
                     'value': constants.W_ANUDEEP_OPTIONAL,
                     'short': '"AndueepND (Whitelist+Optional)',
