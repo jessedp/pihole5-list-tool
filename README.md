@@ -1,5 +1,8 @@
 # pihole5-list-tool
+
 [![PyPI version](https://badge.fury.io/py/pihole5-list-tool.svg)](https://badge.fury.io/py/pihole5-list-tool)
+[![PyPI downloads](https://img.shields.io/pypi/dm/pihole5-list-tool)](https://pypi.org/project/pihole5-list-tool/)
+
 
 This tool allows quickly and easily bulk adding __Whitelists__ and __Black/Block/Ad lists__ to your [Pi-hole 5](https://pi-hole.net/) setup.
 
