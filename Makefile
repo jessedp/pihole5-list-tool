@@ -14,7 +14,7 @@ build: clean-build lint
 	
 
 lint:
-	autopep8 -i -r .
+	autopep8 -i -a -r .
 	flake8 --exclude=.tox *.py
 	# disabled b/c I'm stubborn and want dashes in pacakge name
 	pylint *.py

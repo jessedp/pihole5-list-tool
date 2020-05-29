@@ -1,7 +1,30 @@
 """ prompts for inquirer """
 import os
+import sqlite3
 from PyInquirer import prompt, Validator, ValidationError, Separator
 import constants
+import utils
+
+
+def check_db(path):
+    """ validate we have a good file """
+    if not os.path.exists(path):
+        utils.warn(' DOES NOT EXIST!')
+        return False
+    try:
+        conn = sqlite3.connect(path)
+    except (sqlite3.DatabaseError, sqlite3.OperationalError):
+        utils.warn(' EXISTS, BUT IS NOT A SQLITE DATABASE!')
+        return False
+
+    try:
+        sqldb = conn.cursor()
+        _ = sqldb.execute('select count(*) from info')
+        conn.close()
+    except (sqlite3.DatabaseError, sqlite3.OperationalError):
+        utils.warn(' IS NOT A PI-HOLE GRAVITY DB!')
+        return False
+    return True
 
 
 class ValidateEditor(Validator):
@@ -32,8 +55,8 @@ def ask_db():
             'default': constants.DEFAULT_DB,
             'message': 'Gravity Db to Update:',
             'validate':
-                lambda answer: f'Please enter a valid file name or nothing for {constants.DEFAULT_DB} {answer}.'
-            if answer.strip() != '' and not os.path.exists(answer) else True
+                lambda answer: 'Please enter the full path to the │gravity.db│ (in your pi-hole configuration directory).'
+            if not check_db(answer) else True
 
         }
     ]
