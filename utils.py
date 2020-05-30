@@ -1,7 +1,10 @@
 """Utils"""
 import sys
 import os
+import subprocess
+from subprocess import CalledProcessError
 import re
+import json
 from urllib.parse import urlparse
 from colors import color
 import constants
@@ -10,7 +13,6 @@ import constants
 def valid_url(url):
     """make sure we have a valid url"""
     parts = urlparse(url.strip())
-    print(parts)
     return parts.scheme and parts.netloc
 
 
@@ -63,6 +65,35 @@ def process_lines(data, comment, full_url_only=True):
         warn(f'Skipping: {line}')
 
     return new_data
+
+
+def find_docker():
+    """ try to find a running docker image and its config """
+    # return [True, '/etc/pihole/gravity.db']
+    try:
+        result = subprocess.run(["docker", "inspect", "pihole"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, check=True)
+    except (CalledProcessError, FileNotFoundError):
+        warn('docker pihole image not found running, continuing...')
+        return [False, None]
+
+    if result.returncode != 0:
+        warn('docker pihole image not found running, continuing...')
+        return [False, None]
+
+    config = json.loads(result.stdout)
+    if not config[0] or not config[0]['HostConfig'] or not config[0]['HostConfig']['Binds']:
+        warn("unable to find config for running docker pihole image, continuing...")
+        return [False, None]
+
+    for row in config[0]['HostConfig']['Binds']:
+        parts = row.split(':')
+        if parts[1] == '/etc/pihole':
+            path = f'{parts[0]}/gravity.db'
+            if os.path.exists(path):
+                return [True, path]
+
+    warn("unable to find config for running docker pihole image, continuing...")
+    return [False, result.stdout]
 
 
 def clear():
