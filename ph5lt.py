@@ -40,7 +40,7 @@ import constants
 import inquirer
 import utils
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 
 blackLists = {
@@ -88,6 +88,7 @@ def main():
         utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
 
         db_file = ''
+        use_docker = False
         docker = utils.find_docker()
 
         if docker[0] is True:
