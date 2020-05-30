@@ -40,7 +40,7 @@ import constants
 import inquirer
 import utils
 
-__version__ = '0.3.2'
+__version__ = '0.4.0'
 
 
 blackLists = {
@@ -87,7 +87,17 @@ def main():
         utils.danger('    Do not hit ENTER or Y if a step seems to hang!')
         utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
 
-        db_file = inquirer.ask_db()
+        db_file = ''
+        docker = utils.find_docker()
+
+        if docker[0] is True:
+            utils.success(f'Found Running Docker config: {docker[1]}')
+            use_docker = inquirer.confirm('Use Docker-ized config?', 'n')
+            if use_docker:
+                db_file = docker[1]
+
+        if not use_docker:
+            db_file = inquirer.ask_db()
 
         list_type = inquirer.ask_list_type()
 
@@ -97,12 +107,20 @@ def main():
         if list_type == constants.WHITELIST:
             process_whitelists(db_file)
 
-        if inquirer.confirm('Update Gravity for immediate affect?'):
+        if inquirer.confirm('Update Gravity for immediate effect?'):
             print()
-            os.system('pihole -g')
+            if use_docker:
+                os.system('docker exec pihole bash "/usr/local/bin/pihole" "-g"')
+            else:
+                os.system('pihole -g')
         else:
-            utils.info(
-                'Update Gravity through the web interface or by running:\n\t# pihole -g')
+            if use_docker:
+                utils.info('Update Gravity through the web interface or by running:\n\t' +
+                           '# docker exec pihole bash "/usr/local/bin/pihole" "-g"')
+
+            else:
+                utils.info(
+                    'Update Gravity through the web interface or by running:\n\t# pihole -g')
 
             utils.info('\n\tBye!')
 
