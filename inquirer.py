@@ -233,14 +233,14 @@ def ask_paste():
     return result['content']
 
 
-def confirm(message):
+def confirm(message, default='y'):
     """ generic y/n confirm prompt """
     questions = [
         {
             'name': 'confirm',
             'type': 'confirm',
             'message': message,
-            'default': 'y',
+            'default': default == 'y',
         }
     ]
     result = key_prompt(questions)
