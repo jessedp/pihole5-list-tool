@@ -71,7 +71,7 @@ def find_docker():
     """ try to find a running docker image and its config """
     # return [True, '/etc/pihole/gravity.db']
     try:
-        result = subprocess.run(["docker", "inspect", "pihole"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, check=True)
+        result = subprocess.run(["docker", "inspect", "pihole"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True)
     except (CalledProcessError, FileNotFoundError):
         warn('docker pihole image not found running, continuing...')
         return [False, None]
