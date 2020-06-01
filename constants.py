@@ -1,5 +1,5 @@
 """Constant like things"""
-DEFAULT_DB = '/etc/pihole/gravity.db'
+DEFAULT_DB = "/etc/pihole/gravity.db"
 
 BLACKLIST = 1
 WHITELIST = 2

@@ -1,7 +1,7 @@
 requests
 PyInquirer
 autopep8
-flake8
+black
 ansicolors
 twine
 pytest
