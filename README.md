@@ -6,7 +6,7 @@
 
 This tool allows quickly and easily bulk adding __Whitelists__ and __Black/Block/Ad lists__ to your [Pi-hole 5](https://pi-hole.net/) setup.
 
-_Bonus:_ If you're running the [pihole docker image](https://hub.docker.com/r/pihole/pihole/) (or one name _pihole_), it should be detected
+_Bonus:_ If you're running the [pihole docker image](https://hub.docker.com/r/pihole/pihole/) (or one named _pihole_), it should be detected
 and offered as a default option.
 
 
