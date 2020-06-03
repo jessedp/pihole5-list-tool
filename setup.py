@@ -5,9 +5,9 @@ from setuptools import setup, find_packages
 
 def version():
     """Return version string."""
-    with io.open('ph5lt.py') as input_file:
+    with io.open("ph5lt.py") as input_file:
         for line in input_file:
-            if line.startswith('__version__'):
+            if line.startswith("__version__"):
                 return ast.parse(line).body[0].value.s
 
 
@@ -21,7 +21,7 @@ with io.open("README.md") as readme:
         long_description=readme.read(),
         long_description_content_type="text/markdown",
         package_dir="",
-        packages=find_packages(exclude=('tests', 'tests.*')),
+        packages=find_packages(exclude=("tests", "tests.*")),
         url="https://github.com/jessedp/pihole5-list-tool",
         classifiers=[
             "Programming Language :: Python :: 3",
@@ -30,15 +30,9 @@ with io.open("README.md") as readme:
             "Topic :: Utilities",
             "Topic :: Internet :: Name Service (DNS)",
         ],
-        keywords='pihole, pi-hole, blacklist, blocklist, adlist',
-        python_requires='>=3.6',
-        install_requires=[
-            'PyInquirer',
-            'ansicolors',
-            'requests'
-        ],
-        py_modules=['ph5lt', 'inquirer', 'constants', 'utils'],
-        entry_points={
-            'console_scripts': ['pihole5-list-tool = ph5lt:main']
-        },
+        keywords="pihole, pi-hole, blacklist, blocklist, adlist",
+        python_requires=">=3.6",
+        install_requires=["PyInquirer", "ansicolors", "requests"],
+        py_modules=["ph5lt", "inquirer", "constants", "utils"],
+        entry_points={"console_scripts": ["pihole5-list-tool = ph5lt:main"]},
     )
