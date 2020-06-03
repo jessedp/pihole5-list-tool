@@ -35,7 +35,7 @@ def process_lines(data, comment, full_url_only=True):
     """massage the lines so we have good ones"""
     new_data = []
     extra_comment = ''
-    for line in data.strip().split("\n"):
+    for line in data:
         line = line.strip()
         if line == '':
             extra_comment = ''
