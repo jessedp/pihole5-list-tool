@@ -44,36 +44,16 @@ __version__ = "0.4.1"
 
 
 blackLists = {
-    constants.B_FIREBOG_NOCROSS: {
-        "url": "https://v.firebog.net/hosts/lists.php?type=nocross",
-        "comment": "Firebog | Non-crossed lists",
-    },
-    constants.B_FIREBOG_ALL: {
-        "url": "https://v.firebog.net/hosts/lists.php?type=all",
-        "comment": "Firebog | All lists",
-    },
-    constants.B_FIREBOG_TICKED: {
-        "url": "https://v.firebog.net/hosts/lists.php?type=tick",
-        "comment": "Firebog | Ticked lists",
-    },
+    constants.B_FIREBOG_NOCROSS: {"url": "https://v.firebog.net/hosts/lists.php?type=nocross", "comment": "Firebog | Non-crossed lists",},
+    constants.B_FIREBOG_ALL: {"url": "https://v.firebog.net/hosts/lists.php?type=all", "comment": "Firebog | All lists",},
+    constants.B_FIREBOG_TICKED: {"url": "https://v.firebog.net/hosts/lists.php?type=tick", "comment": "Firebog | Ticked lists",},
 }
 
-ANUDEEP_WHITELIST = (
-    "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt"
-)
+ANUDEEP_WHITELIST = "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt"
 whiteLists = {
-    constants.W_ANUDEEP_WHITE: {
-        "url": ANUDEEP_WHITELIST,
-        "comment": "AndeepND | Whitelist Only",
-    },
-    constants.W_ANUDEEP_REFERRAL: {
-        "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/referral-sites.txt",
-        "comment": "AndeepND | Whitelist+Referral",
-    },
-    constants.W_ANUDEEP_OPTIONAL: {
-        "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/optional-list.txt",
-        "comment": "AndeepND | Whitelist+Optional",
-    },
+    constants.W_ANUDEEP_WHITE: {"url": ANUDEEP_WHITELIST, "comment": "AndeepND | Whitelist Only",},
+    constants.W_ANUDEEP_REFERRAL: {"url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/referral-sites.txt", "comment": "AndeepND | Whitelist+Referral",},
+    constants.W_ANUDEEP_OPTIONAL: {"url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/optional-list.txt", "comment": "AndeepND | Whitelist+Optional",},
 }
 
 
@@ -82,11 +62,7 @@ def main():
     try:
         utils.clear()
         print(color("    ┌──────────────────────────────────────────┐", fg="#b61042"))
-        print(
-            color("    │       ", fg="#b61042")
-            + color(f"π-hole 5 list tool  v{__version__}", "#FFF")
-            + color("         │", fg="#b61042")
-        )
+        print(color("    │       ", fg="#b61042") + color(f"π-hole 5 list tool  v{__version__}", "#FFF") + color("         │", fg="#b61042"))
         print(color("    └──────────────────────────────────────────┘", fg="#b61042"))
         utils.info("    https://github.com/jessedp/pihole5-list-tool\n")
         utils.danger("    Do not hit ENTER or Y if a step seems to hang!")
@@ -121,15 +97,10 @@ def main():
                 os.system("pihole -g")
         else:
             if use_docker:
-                utils.info(
-                    "Update Gravity through the web interface or by running:\n\t"
-                    + '# docker exec pihole bash "/usr/local/bin/pihole" "-g"'
-                )
+                utils.info("Update Gravity through the web interface or by running:\n\t" + '# docker exec pihole bash "/usr/local/bin/pihole" "-g"')
 
             else:
-                utils.info(
-                    "Update Gravity through the web interface or by running:\n\t# pihole -g"
-                )
+                utils.info("Update Gravity through the web interface or by running:\n\t# pihole -g")
 
             utils.info("\n\tBye!")
 
@@ -178,9 +149,7 @@ def process_blacklists(db_file):
         else:
             added += 1
             vals = (item["url"], item["comment"])
-            sqldb.execute(
-                "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
-            )
+            sqldb.execute("INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals)
             conn.commit()
 
     sqldb.close()
@@ -211,9 +180,7 @@ def process_whitelists(db_file):
 
     if source == constants.PASTE:
         import_list = inquirer.ask_paste()
-        import_list = utils.process_lines(
-            import_list, "Pasted content", utils.validate_host
-        )
+        import_list = utils.process_lines(import_list, "Pasted content", utils.validate_host)
 
     if len(import_list) == 0:
         utils.die("No valid urls found, try again")
@@ -227,9 +194,7 @@ def process_whitelists(db_file):
     added = 0
     exists = 0
     for item in import_list:
-        sqldb.execute(
-            "SELECT COUNT(*) FROM domainlist WHERE domain = ?", (item["url"],)
-        )
+        sqldb.execute("SELECT COUNT(*) FROM domainlist WHERE domain = ?", (item["url"],))
 
         cnt = sqldb.fetchone()
 
@@ -244,8 +209,7 @@ def process_whitelists(db_file):
 
             vals = (item["url"], domain_type, item["comment"])
             sqldb.execute(
-                "INSERT OR IGNORE INTO domainlist (domain, type, comment) VALUES (?,?,?)",
-                vals,
+                "INSERT OR IGNORE INTO domainlist (domain, type, comment) VALUES (?,?,?)", vals,
             )
             conn.commit()
             added += 1

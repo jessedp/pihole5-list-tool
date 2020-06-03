@@ -51,21 +51,15 @@ def process_lines(data, comment, full_url_only=True):
 
         if full_url_only:
             if valid_url(line):
-                new_data.append(
-                    {"url": line, "comment": full_comment, "type": constants.URL}
-                )
+                new_data.append({"url": line, "comment": full_comment, "type": constants.URL})
                 continue
         else:
             if validate_host(line):
-                new_data.append(
-                    {"url": line, "comment": full_comment, "type": constants.URL}
-                )
+                new_data.append({"url": line, "comment": full_comment, "type": constants.URL})
                 continue
 
             if validate_regex(line):
-                new_data.append(
-                    {"url": line, "comment": full_comment, "type": constants.REGEX}
-                )
+                new_data.append({"url": line, "comment": full_comment, "type": constants.REGEX})
                 continue
 
         warn(f"Skipping: {line}")
@@ -77,13 +71,7 @@ def find_docker():
     """ try to find a running docker image and its config """
     # return [True, '/etc/pihole/gravity.db']
     try:
-        result = subprocess.run(
-            ["docker", "inspect", "pihole"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            text=True,
-            check=True,
-        )
+        result = subprocess.run(["docker", "inspect", "pihole"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, check=True,)
     except (CalledProcessError, FileNotFoundError):
         warn("docker pihole image not found running, continuing...")
         return [False, None]
@@ -93,11 +81,7 @@ def find_docker():
         return [False, None]
 
     config = json.loads(result.stdout)
-    if (
-        not config[0]
-        or not config[0]["HostConfig"]
-        or not config[0]["HostConfig"]["Binds"]
-    ):
+    if not config[0] or not config[0]["HostConfig"] or not config[0]["HostConfig"]["Binds"]:
         warn("unable to find config for running docker pihole image, continuing...")
         return [False, None]
 

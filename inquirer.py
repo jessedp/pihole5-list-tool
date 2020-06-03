@@ -32,9 +32,7 @@ class ValidateEditor(Validator):
 
     def validate(self, document):
         if document.text and len(document.text.split("\n")) <= 1:
-            raise ValidationError(
-                message="Must be at least 1 line", cursor_position=len(document.text)
-            )
+            raise ValidationError(message="Must be at least 1 line", cursor_position=len(document.text))
 
 
 def key_prompt(questions):
@@ -53,9 +51,7 @@ def ask_db():
             "type": "input",
             "default": constants.DEFAULT_DB,
             "message": "Gravity Db to Update:",
-            "validate": lambda answer: "Please enter the full path to the │gravity.db│ (in your pi-hole configuration directory)."
-            if not check_db(answer)
-            else True,
+            "validate": lambda answer: "Please enter the full path to the │gravity.db│ (in your pi-hole configuration directory)." if not check_db(answer) else True,
         }
     ]
     result = key_prompt(questions)
@@ -70,18 +66,7 @@ def ask_list_type():
             "type": "list",
             "default": "black",
             "message": "Add Blacklists or Whitelists?",
-            "choices": [
-                {
-                    "name": "Blacklists",
-                    "value": constants.BLACKLIST,
-                    "short": "Blacklists",
-                },
-                {
-                    "name": "Whitelists",
-                    "value": constants.WHITELIST,
-                    "short": "Whitelists",
-                },
-            ],
+            "choices": [{"name": "Blacklists", "value": constants.BLACKLIST, "short": "Blacklists",}, {"name": "Whitelists", "value": constants.WHITELIST, "short": "Whitelists",},],
         }
     ]
 
@@ -116,16 +101,8 @@ def ask_blacklist():
                     "short": "Firebog (all)",
                 },
                 Separator(),
-                {
-                    "name": "File    | A file with urls of lists, 1 per line",
-                    "value": constants.FILE,
-                    "short": "File",
-                },
-                {
-                    "name": "Paste   | Paste urls of lists, 1 per line - opens editor, save, close",
-                    "value": constants.PASTE,
-                    "short": "Paste",
-                },
+                {"name": "File    | A file with urls of lists, 1 per line", "value": constants.FILE, "short": "File",},
+                {"name": "Paste   | Paste urls of lists, 1 per line - opens editor, save, close", "value": constants.PASTE, "short": "Paste",},
             ],
         }
     ]
@@ -171,16 +148,8 @@ def ask_whitelist():
                     "short": "AndeepND (Whitelist+Referral)",
                 },
                 Separator(),
-                {
-                    "name": "File      | A file with urls of lists, 1 per line",
-                    "value": constants.FILE,
-                    "short": "File",
-                },
-                {
-                    "name": "Paste     | Paste urls of lists, 1 per line - opens editor, save, close",
-                    "value": constants.PASTE,
-                    "short": "Paste",
-                },
+                {"name": "File      | A file with urls of lists, 1 per line", "value": constants.FILE, "short": "File",},
+                {"name": "Paste     | Paste urls of lists, 1 per line - opens editor, save, close", "value": constants.PASTE, "short": "Paste",},
             ],
         }
     ]
@@ -191,16 +160,7 @@ def ask_whitelist():
 
 def ask_import_file():
     """ prompt for file to import from """
-    questions = [
-        {
-            "name": "file",
-            "type": "input",
-            "message": "File to import",
-            "validate": lambda value: "Please enter a valid file name."
-            if not os.path.exists(value)
-            else True,
-        }
-    ]
+    questions = [{"name": "file", "type": "input", "message": "File to import", "validate": lambda value: "Please enter a valid file name." if not os.path.exists(value) else True,}]
     result = key_prompt(questions)
     return result["file"]
 
@@ -223,13 +183,6 @@ def ask_paste():
 
 def confirm(message, default="y"):
     """ generic y/n confirm prompt """
-    questions = [
-        {
-            "name": "confirm",
-            "type": "confirm",
-            "message": message,
-            "default": default == "y",
-        }
-    ]
+    questions = [{"name": "confirm", "type": "confirm", "message": message, "default": default == "y",}]
     result = key_prompt(questions)
     return result["confirm"]
