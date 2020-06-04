@@ -13,7 +13,7 @@ import constants
 def valid_url(url):
     """make sure we have a valid url"""
     parts = urlparse(url.strip())
-    return parts.scheme and parts.netloc
+    return parts.scheme != "" and parts.netloc != ""
 
 
 def validate_host(value):
