@@ -1,4 +1,6 @@
 import utils
+from subprocess import CalledProcessError
+from json.decoder import JSONDecodeError
 
 
 class TestUtils:
@@ -60,3 +62,42 @@ http://github.com/test?f08s
 
         # assert new_list[1]["url"] == "http://github.com"
         assert new_list[1]["comment"] == comment
+
+
+def test_find_docker_not_installed(fake_process):
+    def raise_FNF(process):
+        raise FileNotFoundError
+
+    fake_process.register_subprocess(
+        ["docker", "inspect", "pihole"], stdout="not running FNF", callback=raise_FNF
+    )
+    result = utils.find_docker()
+    assert result == [False, None]
+
+    def raise_CPE(process):
+        raise CalledProcessError(returncode=1, cmd="test")
+
+    fake_process.register_subprocess(
+        ["docker", "inspect", "pihole"], stdout="not running CPE", callback=raise_CPE
+    )
+    result = utils.find_docker()
+    assert result == [False, None]
+
+
+def test_find_docker_image_not_running(fake_process):
+    fake_process.register_subprocess(
+        ["docker", "inspect", "pihole"], stdout="not running", returncode=1
+    )
+    result = utils.find_docker()
+    assert result == [False, None]
+
+
+def test_find_docker_image_not_found(fake_process):
+    def raise_JDE(process):
+        raise JSONDecodeError(msg="{}", doc="{}", pos=0)
+
+    fake_process.register_subprocess(
+        ["docker", "inspect", "pihole"], stdout="bad json", callback=raise_JDE
+    )
+    result = utils.find_docker()
+    assert result == [False, None]
