@@ -40,7 +40,7 @@ import constants
 import inquirer
 import utils
 
-__version__ = "0.4.4"
+__version__ = "0.4.5"
 
 
 blackLists = {
@@ -202,7 +202,9 @@ def process_whitelists(db_file):
         # This breaks if we add a new whitelist setup
         if source != ANUDEEP_WHITELIST:
             resp = requests.get(ANUDEEP_WHITELIST)
-            import_list += utils.process_lines(resp.text, url_source["comment"], False)
+            import_list += utils.process_lines(
+                resp.text.split("\n"), url_source["comment"], False
+            )
 
     if source == constants.FILE:
         fname = inquirer.ask_import_file()
@@ -226,6 +228,7 @@ def process_whitelists(db_file):
     sqldb = conn.cursor()
     added = 0
     exists = 0
+
     for item in import_list:
         sqldb.execute(
             "SELECT COUNT(*) FROM domainlist WHERE domain = ?", (item["url"],)
