@@ -85,7 +85,7 @@ def find_docker():
             check=True,
         )
     except (CalledProcessError, FileNotFoundError) as err:
-        warn("docker not found running, continuing...\n" + str(err))
+        warn("docker not found running, continuing...")
         return [False, None]
 
     if result.returncode != 0:
@@ -95,7 +95,6 @@ def find_docker():
     try:
         config = json.loads(result.stdout)
     except JSONDecodeError:
-        print("load failed")
         return [False, None]
 
     if (
