@@ -117,7 +117,7 @@ def process_blacklists(db_file):
     if source in blackLists:
         url_source = blackLists[source]
         resp = requests.get(url_source["url"])
-        import_list = utils.process_lines(resp.text.split("\n"), url_source["comment"])
+        import_list = utils.process_lines(resp.text, url_source["comment"])
 
     if source == constants.FILE:
         fname = inquirer.ask_import_file()
@@ -167,11 +167,11 @@ def process_whitelists(db_file):
     if source in whiteLists:
         url_source = whiteLists[source]
         resp = requests.get(url_source["url"])
-        import_list = utils.process_lines(resp.text.split("\n"), url_source["comment"], False)
+        import_list = utils.process_lines(resp.text, url_source["comment"], False)
         # This breaks if we add a new whitelist setup
         if source != ANUDEEP_WHITELIST:
             resp = requests.get(ANUDEEP_WHITELIST)
-            import_list += utils.process_lines(resp.text.split("\n"), url_source["comment"], False)
+            import_list += utils.process_lines(resp.text, url_source["comment"], False)
 
     if source == constants.FILE:
         fname = inquirer.ask_import_file()

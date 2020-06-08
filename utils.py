@@ -6,6 +6,7 @@ from subprocess import CalledProcessError
 import re
 import json
 from urllib.parse import urlparse
+from json.decoder import JSONDecodeError
 from colors import color
 import constants
 
@@ -13,7 +14,7 @@ import constants
 def valid_url(url):
     """make sure we have a valid url"""
     parts = urlparse(url.strip())
-    return parts.scheme and parts.netloc
+    return parts.scheme != "" and parts.netloc != ""
 
 
 def validate_host(value):
@@ -35,7 +36,7 @@ def process_lines(data, comment, full_url_only=True):
     """massage the lines so we have good ones"""
     new_data = []
     extra_comment = ""
-    for line in data:
+    for line in data.split("\n"):
         line = line.strip()
         if line == "":
             extra_comment = ""
@@ -51,15 +52,21 @@ def process_lines(data, comment, full_url_only=True):
 
         if full_url_only:
             if valid_url(line):
-                new_data.append({"url": line, "comment": full_comment, "type": constants.URL})
+                new_data.append(
+                    {"url": line, "comment": full_comment, "type": constants.URL}
+                )
                 continue
         else:
             if validate_host(line):
-                new_data.append({"url": line, "comment": full_comment, "type": constants.URL})
+                new_data.append(
+                    {"url": line, "comment": full_comment, "type": constants.URL}
+                )
                 continue
 
             if validate_regex(line):
-                new_data.append({"url": line, "comment": full_comment, "type": constants.REGEX})
+                new_data.append(
+                    {"url": line, "comment": full_comment, "type": constants.REGEX}
+                )
                 continue
 
         warn(f"Skipping: {line}")
@@ -71,17 +78,31 @@ def find_docker():
     """ try to find a running docker image and its config """
     # return [True, '/etc/pihole/gravity.db']
     try:
-        result = subprocess.run(["docker", "inspect", "pihole"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True,)
-    except (CalledProcessError, FileNotFoundError):
-        warn("docker pihole image not found running, continuing...")
+        result = subprocess.run(
+            ["docker", "inspect", "pihole"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            check=True,
+        )
+    except (CalledProcessError, FileNotFoundError) as err:
+        warn("docker not found running, continuing...\n" + str(err))
         return [False, None]
 
     if result.returncode != 0:
         warn("docker pihole image not found running, continuing...")
         return [False, None]
 
-    config = json.loads(result.stdout)
-    if not config[0] or not config[0]["HostConfig"] or not config[0]["HostConfig"]["Binds"]:
+    try:
+        config = json.loads(result.stdout)
+    except JSONDecodeError:
+        print("load failed")
+        return [False, None]
+
+    if (
+        not config[0]
+        or not config[0]["HostConfig"]
+        or not config[0]["HostConfig"]["Binds"]
+    ):
         warn("unable to find config for running docker pihole image, continuing...")
         return [False, None]
 

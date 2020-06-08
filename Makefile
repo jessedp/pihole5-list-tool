@@ -1,7 +1,7 @@
 clean-pyc:
-	find . -name '*.pyc' -exec rm --force {} +
-	find . -name '*.pyo' -exec rm --force {} +
-	name '*~' -exec rm --force  {} 
+	@find . -name '*.pyc' -exec rm --force {} +
+	@find . -name '*.pyo' -exec rm --force {} +
+	@find . -name '*~' -exec rm --force  {} + 
 
 clean-build:
 	rm --force --recursive build/
@@ -15,13 +15,12 @@ build: clean-build lint
 
 lint:
 	autopep8 -i -a -r .
-	# flake8 --exclude=.tox *.py
 	black --target-version py36 -l 200 .
 	# disabled b/c I'm stubborn and want dashes in pacakge name
 	pylint *.py
 
 test: clean-pyc
-	py.test --verbose --color=yes $(TEST_PATH)
+	 python3 -m pytest
 
 run:
 	python3 ph5lt.py
