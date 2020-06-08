@@ -40,7 +40,7 @@ import constants
 import inquirer
 import utils
 
-__version__ = "0.4.1"
+__version__ = "0.4.5"
 
 
 blackLists = {
@@ -193,6 +193,7 @@ def process_whitelists(db_file):
     sqldb = conn.cursor()
     added = 0
     exists = 0
+
     for item in import_list:
         sqldb.execute("SELECT COUNT(*) FROM domainlist WHERE domain = ?", (item["url"],))
 
