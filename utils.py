@@ -6,6 +6,7 @@ from subprocess import CalledProcessError
 import re
 import json
 from urllib.parse import urlparse
+from json.decoder import JSONDecodeError
 from colors import color
 import constants
 
@@ -81,18 +82,22 @@ def find_docker():
             ["docker", "inspect", "pihole"],
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
-            text=True,
             check=True,
         )
-    except (CalledProcessError, FileNotFoundError):
-        warn("docker not found running, continuing...")
+    except (CalledProcessError, FileNotFoundError) as err:
+        warn("docker not found running, continuing...\n" + str(err))
         return [False, None]
 
     if result.returncode != 0:
         warn("docker pihole image not found running, continuing...")
         return [False, None]
 
-    config = json.loads(result.stdout)
+    try:
+        config = json.loads(result.stdout)
+    except JSONDecodeError:
+        print("load failed")
+        return [False, None]
+
     if (
         not config[0]
         or not config[0]["HostConfig"]
