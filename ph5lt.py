@@ -40,7 +40,7 @@ import constants
 import inquirer
 import utils
 
-__version__ = "0.4.5"
+__version__ = "0.4.6"
 
 
 blackLists = {
@@ -65,8 +65,6 @@ def main():
         print(color("    │       ", fg="#b61042") + color(f"π-hole 5 list tool  v{__version__}", "#FFF") + color("         │", fg="#b61042"))
         print(color("    └──────────────────────────────────────────┘", fg="#b61042"))
         utils.info("    https://github.com/jessedp/pihole5-list-tool\n")
-        utils.danger("    Do not hit ENTER or Y if a step seems to hang!")
-        utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
 
         db_file = ""
         use_docker = False
@@ -82,6 +80,10 @@ def main():
             db_file = inquirer.ask_db()
 
         list_type = inquirer.ask_list_type()
+
+        print()
+        utils.danger("    Do not hit ENTER or Y if a step seems to hang!")
+        utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
 
         if list_type == constants.BLACKLIST:
             process_blacklists(db_file)
@@ -215,10 +217,13 @@ def process_whitelists(db_file):
             conn.commit()
             added += 1
 
-    sqldb.close()
-    conn.close()
-
-    utils.success(f"{added} whitelists added! {exists} already existed.")
+    sqldb.close()    "python.formatting.autopep8Args": [
+        "--max-line-length=200"
+    ],
+    "python.linting.pylintArgs": [
+        "--max-line-length=200"
+    ],
+dded} whitelists added! {exists} already existed.")
 
 
 if __name__ == "__main__":
