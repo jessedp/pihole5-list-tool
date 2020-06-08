@@ -19,7 +19,7 @@ lint:
 	# disabled b/c I'm stubborn and want dashes in pacakge name
 	pylint *.py
 
-test: clean-pyc
+test: clean-pyc lint
 	 python3 -m pytest
 
 run:
@@ -37,4 +37,7 @@ publishTest: package
 
 publish: package
 	python3 -m twine upload dist/* 
+
+reqs:
+	pip3 install -r requirements.txt
 
