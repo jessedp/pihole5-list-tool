@@ -84,7 +84,7 @@ def find_docker():
             stderr=subprocess.DEVNULL,
             check=True,
         )
-    except (CalledProcessError, FileNotFoundError) as err:
+    except (CalledProcessError, FileNotFoundError):
         warn("docker not found running, continuing...")
         return [False, None]
 
@@ -107,7 +107,7 @@ def find_docker():
 
     for row in config[0]["HostConfig"]["Binds"]:
         parts = row.split(":")
-        if parts[1] == "/etc/pihole":
+        if parts[1].startswith("/etc/pihole"):
             path = f"{parts[0]}/gravity.db"
             if os.path.exists(path):
                 return [True, path]
