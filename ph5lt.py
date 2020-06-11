@@ -253,10 +253,10 @@ def process_whitelists(db_file):
             conn.commit()
             added += 1
 
-        sqldb.close()
-        conn.close()
+    sqldb.close()
+    conn.close()
 
-        utils.success(f"{added} whitelists added! {exists} already existed.")
+    utils.success(f"{added} whitelists added! {exists} already existed.")
 
 
 if __name__ == "__main__":
