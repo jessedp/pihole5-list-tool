@@ -63,23 +63,23 @@ def ask_db():
 
 
 def ask_list_type():
-    """ prompt for white/black list """
+    """ prompt for allow/block list """
     questions = [
         {
             "name": "listType",
             "type": "list",
-            "default": "black",
-            "message": "Add Blacklists or Whitelists?",
+            "default": "block",
+            "message": "Add Blocklists or Allolists?",
             "choices": [
                 {
-                    "name": "Blacklists",
-                    "value": constants.BLACKLIST,
-                    "short": "Blacklists",
+                    "name": "Blocklists",
+                    "value": constants.BLOCKLIST,
+                    "short": "Blocklists",
                 },
                 {
-                    "name": "Whitelists",
-                    "value": constants.WHITELIST,
-                    "short": "Whitelists",
+                    "name": "Allowlists",
+                    "value": constants.ALLOWLIST,
+                    "short": "Allowlists",
                 },
             ],
         }
@@ -89,8 +89,8 @@ def ask_list_type():
     return result["listType"]
 
 
-def ask_blacklist():
-    """ prompt for which blacklist to use """
+def ask_blocklist():
+    """ prompt for which blocklist to use """
     questions = [
         {
             "name": "source",
@@ -98,20 +98,20 @@ def ask_blacklist():
             "message": "Where are the block lists coming from?",
             "choices": [
                 {
-                    "name": """Firebog | Non-crossed lists : Use when someone is usually around to whitelist
+                    "name": """Firebog | Non-crossed lists : Use when someone is usually around to allow
              falsely blocked sites""",
                     "value": constants.B_FIREBOG_NOCROSS,
                     "short": "Firebog (no cross)",
                 },
                 {
-                    "name": """Firebog | Ticked lists : Use where no one will be whitelisting falsely
+                    "name": """Firebog | Ticked lists : Use where no one will be allowing falsely
              blocked sites""",
                     "value": constants.B_FIREBOG_TICKED,
                     "short": "Firebog (ticked)",
                 },
                 {
                     "name": """Firebog | All lists : Use when someone will always be around to
-             whitelist falsely blocked sites""",
+             allow falsely blocked sites""",
                     "value": constants.B_FIREBOG_ALL,
                     "short": "Firebog (all)",
                 },
@@ -134,32 +134,32 @@ def ask_blacklist():
     return result["source"]
 
 
-def ask_whitelist():
-    """ prompt for which blacklist to use """
+def ask_allowlist():
+    """ prompt for which allow to use """
     questions = [
         {
             "name": "source",
             "type": "list",
-            "message": "Where are the whitelists coming from?",
+            "message": "Where are the allowlists coming from?",
             "choices": [
                 {
-                    "name": """AnudeepND | Whitelist Only :
-        Domains that are safe to whitelist i.e does not contain any tracking or
+                    "name": """AnudeepND | Allowlist Only :
+        Domains that are safe to allow i.e does not contain any tracking or
         advertising sites. This fixes many problems like YouTube watch history,
         videos on news sites and so on.""",
-                    "value": constants.W_ANUDEEP_WHITE,
-                    "short": "AnudeepND (Whitelist)",
+                    "value": constants.W_ANUDEEP_ALLOW,
+                    "short": "AnudeepND (Allowlist)",
                 },
                 {
-                    "name": """AnudeepND | Whitelist+Optional :
+                    "name": """AnudeepND | Allowlist+Optional :
         These are needed depending on the service you use. They may contain some
         tracking sites but sometimes it's necessary to add bad domains to make a
         few services to work.""",
                     "value": constants.W_ANUDEEP_OPTIONAL,
-                    "short": '"AndueepND (Whitelist+Optional)',
+                    "short": '"AndueepND (Allowlist+Optional)',
                 },
                 {
-                    "name": """AnudeepND | Whitelist+Referral :
+                    "name": """AnudeepND | Allowlist+Referral :
         People who use services like Slickdeals and Fatwallet need a few sites
         (most of them are either trackers or ads) to be whitelisted to work
         properly. This contains some analytics and ad serving sites like
@@ -168,7 +168,7 @@ def ask_whitelist():
         not contain any tracking or advertising sites. This fixes many problems
         like YouTube watch history, videos on news sites and so on.""",
                     "value": constants.W_ANUDEEP_REFERRAL,
-                    "short": "AndeepND (Whitelist+Referral)",
+                    "short": "AndeepND (Allowlist+Referral)",
                 },
                 Separator(),
                 {

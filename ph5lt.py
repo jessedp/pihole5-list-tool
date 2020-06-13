@@ -24,7 +24,7 @@
 # SOFTWARE.
 
 
-"""Makes bulk adding DNS blacklists and whitelists to Pi-hole 5 a breaaze"""
+"""Makes bulk adding DNS blocklists and allowlists to Pi-hole 5 a breaaze"""
 
 
 import os
@@ -43,7 +43,7 @@ import utils
 __version__ = "0.4.8"
 
 
-blackLists = {
+blockLists = {
     constants.B_FIREBOG_NOCROSS: {
         "url": "https://v.firebog.net/hosts/lists.php?type=nocross",
         "comment": "Firebog | Non-crossed lists",
@@ -58,21 +58,21 @@ blackLists = {
     },
 }
 
-ANUDEEP_WHITELIST = (
+ANUDEEP_ALLOWLIST = (
     "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt"
 )
 whiteLists = {
-    constants.W_ANUDEEP_WHITE: {
-        "url": ANUDEEP_WHITELIST,
-        "comment": "AndeepND | Whitelist Only",
+    constants.W_ANUDEEP_ALLOW: {
+        "url": ANUDEEP_ALLOWLIST,
+        "comment": "AndeepND | Allowlist Only",
     },
     constants.W_ANUDEEP_REFERRAL: {
         "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/referral-sites.txt",
-        "comment": "AndeepND | Whitelist+Referral",
+        "comment": "AndeepND | Allowlist+Referral",
     },
     constants.W_ANUDEEP_OPTIONAL: {
         "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/optional-list.txt",
-        "comment": "AndeepND | Whitelist+Optional",
+        "comment": "AndeepND | Allowlist+Optional",
     },
 }
 
@@ -109,11 +109,11 @@ def main():
         utils.danger("    Do not hit ENTER or Y if a step seems to hang!")
         utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
 
-        if list_type == constants.BLACKLIST:
-            process_blacklists(db_file)
+        if list_type == constants.BLOCKLIST:
+            process_blocklists(db_file)
 
-        if list_type == constants.WHITELIST:
-            process_whitelists(db_file)
+        if list_type == constants.ALLOWLIST:
+            process_allowlists(db_file)
 
         if inquirer.confirm("Update Gravity for immediate effect?"):
             print()
@@ -139,14 +139,14 @@ def main():
         sys.exit(0)
 
 
-def process_blacklists(db_file):
-    """ prompt for and process blacklists """
-    source = inquirer.ask_blacklist()
+def process_blocklists(db_file):
+    """ prompt for and process blocklists """
+    source = inquirer.ask_blocklist()
 
     import_list = []
 
-    if source in blackLists:
-        url_source = blackLists[source]
+    if source in blockLists:
+        url_source = blockLists[source]
         resp = requests.get(url_source["url"])
         import_list = utils.process_lines(resp.text, url_source["comment"])
 
@@ -191,9 +191,9 @@ def process_blacklists(db_file):
     utils.success(f"{added} block lists added! {exists} already existed.")
 
 
-def process_whitelists(db_file):
-    """ prompt for and process blacklists """
-    source = inquirer.ask_whitelist()
+def process_allowlists(db_file):
+    """ prompt for and process allowlists """
+    source = inquirer.ask_allowlist()
 
     import_list = []
 
@@ -202,8 +202,8 @@ def process_whitelists(db_file):
         resp = requests.get(url_source["url"])
         import_list = utils.process_lines(resp.text, url_source["comment"], False)
         # This breaks if we add a new whitelist setup
-        if source != ANUDEEP_WHITELIST:
-            resp = requests.get(ANUDEEP_WHITELIST)
+        if source != ANUDEEP_ALLOWLIST:
+            resp = requests.get(ANUDEEP_ALLOWLIST)
             import_list += utils.process_lines(resp.text, url_source["comment"], False)
 
     if source == constants.FILE:
