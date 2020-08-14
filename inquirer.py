@@ -69,7 +69,7 @@ def ask_list_type():
             "name": "listType",
             "type": "list",
             "default": "block",
-            "message": "Add Blocklists or Allolists?",
+            "message": "Add Blocklists or Allowlists?",
             "choices": [
                 {
                     "name": "Blocklists",
