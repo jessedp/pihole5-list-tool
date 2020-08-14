@@ -66,6 +66,26 @@ http://github.com/test?f08s
         assert new_list[1]["comment"] == comment
 
 
+def test_process_file(tmp_path):
+    comment = "MyComment"
+    tmpdir = tmp_path / "ph5lt"
+    tmpdir.mkdir()
+
+    tmpfile = tmpdir / "imports.txt"
+    urls = """
+http://github.com
+http://github.com/test
+http://github.com/test?f08s
+"""
+    tmpfile.write_text(urls)
+    impfile = open(tmpfile)
+    new_list = utils.process_lines(impfile.read(), comment, True)
+    assert len(new_list) == 3
+
+    # assert new_list[1]["url"] == "http://github.com"
+    assert new_list[1]["comment"] == comment
+
+
 def test_find_docker_not_installed(fake_process):
     def raise_FNF(process):
         raise FileNotFoundError

@@ -153,7 +153,7 @@ def process_blocklists(db_file):
     if source == constants.FILE:
         fname = inquirer.ask_import_file()
         import_file = open(fname)
-        import_list = utils.process_lines(import_file, f"File: {fname}")
+        import_list = utils.process_lines(import_file.read(), f"File: {fname}")
 
     if source == constants.PASTE:
         import_list = inquirer.ask_paste()
