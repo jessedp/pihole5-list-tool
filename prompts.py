@@ -69,15 +69,15 @@ def ask_list_type():
             "name": "listType",
             "type": "list",
             "default": "block",
-            "message": "Add Blocklists or Allowlists?",
+            "message": "Choose one:",
             "choices": [
                 {
-                    "name": "Blocklists",
+                    "name": "Manage Blocklists",
                     "value": constants.BLOCKLIST,
                     "short": "Blocklists",
                 },
                 {
-                    "name": "Allowlists",
+                    "name": "Manage Allowlists",
                     "value": constants.ALLOWLIST,
                     "short": "Allowlists",
                 },

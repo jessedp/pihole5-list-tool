@@ -24,20 +24,18 @@
 # SOFTWARE.
 
 
-"""Makes bulk adding DNS blocklists and allowlists to Pi-hole 5 a breaaze"""
-
+"""Makes bulk adding DNS blocklists and allowlists to Pi-hole 5 a breeze"""
 
 import os
 import sys
 import sqlite3
 import requests
 
-
 from colors import color
 
 
 import constants
-import inquirer
+import prompts
 import utils
 
 __version__ = "0.5.1"
@@ -96,14 +94,14 @@ def main():
 
         if docker[0] is True:
             utils.success(f"Found Running Docker config: {docker[1]}")
-            use_docker = inquirer.confirm("Use Docker-ized config?", "n")
+            use_docker = prompts.confirm("Use Docker-ized config?", "n")
             if use_docker:
                 db_file = docker[1]
 
         if not use_docker:
-            db_file = inquirer.ask_db()
+            db_file = prompts.ask_db()
 
-        list_type = inquirer.ask_list_type()
+        list_type = prompts.ask_list_type()
 
         print()
         utils.danger("    Do not hit ENTER or Y if a step seems to hang!")
@@ -115,7 +113,7 @@ def main():
         if list_type == constants.ALLOWLIST:
             process_allowlists(db_file)
 
-        if inquirer.confirm("Update Gravity for immediate effect?"):
+        if prompts.confirm("Update Gravity for immediate effect?"):
             print()
             if use_docker:
                 os.system('docker exec pihole bash "/usr/local/bin/pihole" "-g"')
@@ -141,7 +139,7 @@ def main():
 
 def process_blocklists(db_file):
     """ prompt for and process blocklists """
-    source = inquirer.ask_blocklist()
+    source = prompts.ask_blocklist()
 
     import_list = []
 
@@ -151,18 +149,18 @@ def process_blocklists(db_file):
         import_list = utils.process_lines(resp.text, url_source["comment"])
 
     if source == constants.FILE:
-        fname = inquirer.ask_import_file()
+        fname = prompts.ask_import_file()
         import_file = open(fname)
         import_list = utils.process_lines(import_file.read(), f"File: {fname}")
 
     if source == constants.PASTE:
-        import_list = inquirer.ask_paste()
+        import_list = prompts.ask_paste()
         import_list = utils.process_lines(import_list, "Pasted content")
 
     if len(import_list) == 0:
         utils.die("No valid urls found, try again")
 
-    if not inquirer.confirm(f"Add {len(import_list)} block lists to {db_file}?"):
+    if not prompts.confirm(f"Add {len(import_list)} block lists to {db_file}?"):
         utils.warn("Nothing changed. Bye!")
         sys.exit(0)
 
@@ -193,7 +191,7 @@ def process_blocklists(db_file):
 
 def process_allowlists(db_file):
     """ prompt for and process allowlists """
-    source = inquirer.ask_allowlist()
+    source = prompts.ask_allowlist()
 
     import_list = []
 
@@ -207,12 +205,12 @@ def process_allowlists(db_file):
             import_list += utils.process_lines(resp.text, url_source["comment"], False)
 
     if source == constants.FILE:
-        fname = inquirer.ask_import_file()
+        fname = prompts.ask_import_file()
         import_file = open(fname)
         import_list = utils.process_lines(import_file.read(), f"File: {fname}", False)
 
     if source == constants.PASTE:
-        import_list = inquirer.ask_paste()
+        import_list = prompts.ask_paste()
         import_list = utils.process_lines(
             import_list, "Pasted content", utils.validate_host
         )
@@ -220,7 +218,7 @@ def process_allowlists(db_file):
     if len(import_list) == 0:
         utils.die("No valid urls found, try again")
 
-    if not inquirer.confirm(f"Add {len(import_list)} white lists to {db_file}?"):
+    if not prompts.confirm(f"Add {len(import_list)} white lists to {db_file}?"):
         utils.warn("Nothing changed. Bye!")
         sys.exit(0)
 
