@@ -48,7 +48,8 @@ def allow_top3_by_comment(cur):
     return cur.fetchall()
 
 
-def bar(cur):
+def stat_bar(cur):
+    """ one-liner stat bar """
     # Block : All=X  Ours=Y Oth=Z   |  Allow : All=X Ours=Y Oth=Z
     data = []
 
@@ -72,13 +73,10 @@ def bar(cur):
     table.inner_row_border = False
     table.inner_column_border = False
     table.padding_left = 2
-    # table.padding_right = 2
 
-    # str = f"Block : All={get(cur, "total_block_enabled")}  Ours={get(cur, 'our_block_enabled')} Oth={get(cur, 'other_block_enabled')}   |  Allow : All={get(cur, "total_allow_enabled")}  Ours={get(cur, 'our_allow_enabled')} Oth={get(cur, 'other_allow_enabled')} "
     print()
     print(color(table.table, bg="#505050", fg="white"))
     print()
-    # print(table.table)
 
 
 def header(cur):
