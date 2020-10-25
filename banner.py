@@ -16,4 +16,3 @@ def display():
     )
     print(color("    └──────────────────────────────────────────┘", fg="#b61042"))
     utils.info("    https://github.com/jessedp/pihole5-list-tool\n")
-
