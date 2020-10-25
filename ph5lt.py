@@ -106,7 +106,7 @@ def main():
 
         if not save:
             conn.close()
-            utils.warn("\nNothing changed. Bye!")
+            utils.warn("\nNothing changed. Bye!\n")
             sys.exit(0)
 
         conn.commit()
@@ -119,6 +119,7 @@ def main():
             else:
                 os.system("pihole -g")
         else:
+            print()
             if use_docker:
                 utils.info(
                     "Update Gravity through the web interface or by running:\n\t"
@@ -130,7 +131,7 @@ def main():
                     "Update Gravity through the web interface or by running:\n\t# pihole -g"
                 )
 
-            utils.info("\n\tBye!")
+            utils.info("\n\tBye!\n")
 
     except (KeyboardInterrupt, KeyError):
         if conn:

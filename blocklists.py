@@ -39,7 +39,7 @@ def manage_blocklists(cur):
             "choices": [
                 {"name": "Add a list", "value": "add",},
                 {"name": "Reset to Pihole defaults", "value": "reset",},
-                {"name": "Remove All Blocklists", "value": "empty",},
+                {"name": "Remove ALL Blocklists", "value": "empty",},
             ],
         }
     ]
@@ -53,7 +53,7 @@ def manage_blocklists(cur):
         return reset(cur)
 
     if action == "empty":
-        print("Not implemented")
+        return empty(cur)
 
     return False
 
@@ -73,6 +73,17 @@ def reset(cur):
             cur.execute(
                 "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
             )
+        return True
+
+    return False
+
+
+def empty(cur):
+    """ remove all block lists"""
+    utils.danger("\n\tThis will REMOVE ALL blocklists!\n")
+
+    if prompts.confirm("Are you sure?", "n"):
+        cur.execute("DELETE FROM adlist")
         return True
 
     return False
