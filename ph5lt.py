@@ -36,29 +36,11 @@ from colors import color
 
 import constants
 import prompts
+import allowlists
 import blocklists
 import utils
 
 __version__ = "0.5.1"
-
-
-ANUDEEP_ALLOWLIST = (
-    "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt"
-)
-whiteLists = {
-    constants.W_ANUDEEP_ALLOW: {
-        "url": ANUDEEP_ALLOWLIST,
-        "comment": "AndeepND | Allowlist Only",
-    },
-    constants.W_ANUDEEP_REFERRAL: {
-        "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/referral-sites.txt",
-        "comment": "AndeepND | Allowlist+Referral",
-    },
-    constants.W_ANUDEEP_OPTIONAL: {
-        "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/optional-list.txt",
-        "comment": "AndeepND | Allowlist+Optional",
-    },
-}
 
 
 def main():
@@ -103,7 +85,7 @@ def main():
             save = blocklists.manage_blocklists(cur)
 
         if list_type == constants.ALLOWLIST:
-            save = process_allowlists(db_file)
+            save = allowlists.manage_allowlists(cur)
 
         if not save:
             conn.close()
@@ -138,74 +120,6 @@ def main():
         if conn:
             conn.close()
         sys.exit(0)
-
-
-def process_allowlists(db_file):
-    """ prompt for and process allowlists """
-    source = prompts.ask_allowlist()
-
-    import_list = []
-
-    if source in whiteLists:
-        url_source = whiteLists[source]
-        resp = requests.get(url_source["url"])
-        import_list = utils.process_lines(resp.text, url_source["comment"], False)
-        # This breaks if we add a new whitelist setup
-        if source != ANUDEEP_ALLOWLIST:
-            resp = requests.get(ANUDEEP_ALLOWLIST)
-            import_list += utils.process_lines(resp.text, url_source["comment"], False)
-
-    if source == constants.FILE:
-        fname = prompts.ask_import_file()
-        import_file = open(fname)
-        import_list = utils.process_lines(import_file.read(), f"File: {fname}", False)
-
-    if source == constants.PASTE:
-        import_list = prompts.ask_paste()
-        import_list = utils.process_lines(
-            import_list, "Pasted content", utils.validate_host
-        )
-
-    if len(import_list) == 0:
-        utils.die("No valid urls found, try again")
-
-    if not prompts.confirm(f"Add {len(import_list)} white lists to {db_file}?"):
-        utils.warn("Nothing changed. Bye!")
-        sys.exit(0)
-
-    conn = sqlite3.connect(db_file)
-    sqldb = conn.cursor()
-    added = 0
-    exists = 0
-
-    for item in import_list:
-        sqldb.execute(
-            "SELECT COUNT(*) FROM domainlist WHERE domain = ?", (item["url"],)
-        )
-
-        cnt = sqldb.fetchone()
-
-        if cnt[0] > 0:
-            exists += 1
-        else:
-            # 0 = exact whitelist
-            # 2 = regex whitelist
-            domain_type = 0
-            if item["type"] == constants.REGEX:
-                domain_type = 2
-
-            vals = (item["url"], domain_type, item["comment"])
-            sqldb.execute(
-                "INSERT OR IGNORE INTO domainlist (domain, type, comment) VALUES (?,?,?)",
-                vals,
-            )
-            conn.commit()
-            added += 1
-
-    sqldb.close()
-    conn.close()
-
-    utils.success(f"{added} whitelists added! {exists} already existed.")
 
 
 if __name__ == "__main__":
