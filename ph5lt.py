@@ -63,25 +63,39 @@ def main():
         conn = sqlite3.connect(db_file)
         cur = conn.cursor()
 
-        stats.bar(cur)
+        default = constants.BLOCKLIST
+        option = ""
+        any_save = False
+        while option != constants.EXIT:
+            stats.stat_bar(cur)
+            option = prompts.main_menu(default)
+            save = False
 
-        list_type = prompts.ask_list_type()
+            if option == constants.BLOCKLIST:
+                save = blocklists.manage_blocklists(cur)
 
-        if list_type == constants.BLOCKLIST:
-            save = blocklists.manage_blocklists(cur)
+            if option == constants.ALLOWLIST:
+                save = allowlists.manage_allowlists(cur)
 
-        if list_type == constants.ALLOWLIST:
-            save = allowlists.manage_allowlists(cur)
+            if option == constants.STATS:
+                stats.header(cur)
 
-        if not save:
-            conn.close()
-            utils.warn("\nNothing changed. Bye!\n")
-            sys.exit(0)
+            if save:
+                any_save = True
+                default = constants.EXIT
+                conn.commit()
+                if option == constants.ALLOWLIST:
+                    stats.allow_header(cur)
 
-        conn.commit()
+                if option == constants.BLOCKLIST:
+                    stats.block_header(cur)
+
+                if prompts.confirm("Are you finished?"):
+                    break
+
         conn.close()
-
-        update_gravity(use_docker)
+        if any_save:
+            update_gravity(use_docker)
 
         utils.info("\n\tBye!\n")
 

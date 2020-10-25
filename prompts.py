@@ -62,14 +62,14 @@ def ask_db():
     return result["gravitydb"]
 
 
-def ask_list_type():
+def main_menu(default=constants.BLOCKLIST):
     """ prompt for allow/block list """
     questions = [
         {
-            "name": "listType",
+            "name": "main",
             "type": "list",
-            "default": "block",
-            "message": "Choose one:",
+            "default": default,
+            "message": "Options:",
             "choices": [
                 {
                     "name": "Manage Blocklists",
@@ -81,12 +81,18 @@ def ask_list_type():
                     "value": constants.ALLOWLIST,
                     "short": "Allowlists",
                 },
+                {
+                    "name": "Full Stats",
+                    "value": constants.STATS,
+                    "short": "Full Stats",
+                },
+                {"name": "Exit", "value": constants.EXIT, "short": "Exit",},
             ],
         }
     ]
 
     result = key_prompt(questions)
-    return result["listType"]
+    return result["main"]
 
 
 def ask_blocklist():
