@@ -1,12 +1,12 @@
 """ add/remove/reset blocklists """
 import requests
+from PyInquirer import Separator
 
 import prompts
-
 import constants
 import utils
 
-""" PiHole 5.1 installation defaults """
+# PiHole 5.1 installation defaults
 DEFAULT_LISTS = [
     "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
     "https://mirror1.malwaredomains.com/files/justdomains",
@@ -38,6 +38,8 @@ def manage_blocklists(cur):
             "message": "Blocklist action:",
             "choices": [
                 {"name": "Add a list", "value": "add",},
+                Separator(),
+                {"name": "Remove Lists Added by This Tool", "value": "remove",},
                 {"name": "Reset to Pihole defaults", "value": "reset",},
                 {"name": "Remove ALL Blocklists", "value": "empty",},
             ],
@@ -55,36 +57,8 @@ def manage_blocklists(cur):
     if action == "empty":
         return empty(cur)
 
-    return False
-
-
-def reset(cur):
-    """ reset block lists to pihole install default """
-    utils.info("\nThis will replace ALL blocklists with these defaults:")
-
-    for url in DEFAULT_LISTS:
-        utils.info("    - " + url)
-    print()
-
-    if prompts.confirm("Are you sure?", "n"):
-        cur.execute("DELETE FROM adlist")
-        for url in DEFAULT_LISTS:
-            vals = (url, "Pi-hole defaults")
-            cur.execute(
-                "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
-            )
-        return True
-
-    return False
-
-
-def empty(cur):
-    """ remove all block lists"""
-    utils.danger("\n\tThis will REMOVE ALL blocklists!\n")
-
-    if prompts.confirm("Are you sure?", "n"):
-        cur.execute("DELETE FROM adlist")
-        return True
+    if action == "remove":
+        return remove(cur)
 
     return False
 
@@ -126,10 +100,63 @@ def add(cur):
             exists += 1
         else:
             added += 1
-            vals = (item["url"], item["comment"])
+            vals = (item["url"], item["comment"] + " [ph5lt]")
             cur.execute(
                 "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
             )
 
     utils.success(f"{added} block lists added! {exists} already existed.")
     return True
+
+
+def reset(cur):
+    """ reset block lists to pihole install default """
+    utils.info("\nThis will replace ALL blocklists with these defaults:")
+
+    for url in DEFAULT_LISTS:
+        utils.info("    - " + url)
+    print()
+
+    if prompts.confirm("Are you sure?", "n"):
+        cur.execute("DELETE FROM adlist")
+        for url in DEFAULT_LISTS:
+            vals = (url, "Pi-hole defaults")
+            cur.execute(
+                "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
+            )
+        return True
+
+    return False
+
+
+def empty(cur):
+    """ remove all block lists"""
+    utils.danger("\n\tThis will REMOVE ALL blocklists!\n")
+
+    if prompts.confirm("Are you sure?", "n"):
+        cur.execute("DELETE FROM adlist")
+        return True
+
+    return False
+
+
+##### Deal with my sloppiness...
+def remove(cur):
+    """ remove lists we added """
+
+    utils.info(
+        """
+    This will try to remove blocklists added by this tool. Removal is done
+    based on the comment for each list. If you've never changed any comments
+    or used other tools, this is 100% safe.
+    ** defaults are not removed
+"""
+    )
+
+    if prompts.confirm("Are you sure?", "n"):
+        cur.execute(
+            "DELETE FROM adlist WHERE comment LIKE '%Firebog |%' OR comment LIKE '%[ph5lt]'"
+        )
+        return True
+
+    return False
