@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/pihole5-list-tool.svg)](https://badge.fury.io/py/pihole5-list-tool)
 [![PyPI downloads](https://img.shields.io/pypi/dm/pihole5-list-tool)](https://pypi.org/project/pihole5-list-tool/)
 
-This tool allows quickly and easily bulk adding __Allowlists__ and __Block/Ad lists__ to your [Pi-hole 5](https://pi-hole.net/) setup.
+This tool allows quickly and easily bulk adding and removing  both __Allowlists__ and __Block/Ad lists__ to/from your [Pi-hole 5](https://pi-hole.net/) setup.
 
 _Bonus:_ If you're running the [pihole docker image](https://hub.docker.com/r/pihole/pihole/) (or one named _pihole_), it should be detected
 and offered as a default option.
