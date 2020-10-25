@@ -63,6 +63,7 @@ whiteLists = {
 
 def main():
     """main method"""
+    conn = None
     try:
         utils.clear()
         print(color("    ┌──────────────────────────────────────────┐", fg="#b61042"))
@@ -87,6 +88,10 @@ def main():
         if not use_docker:
             db_file = prompts.ask_db()
 
+        # ask_db validates the db, pass this connectoin around for easy access & "global" mgmt
+        conn = sqlite3.connect(db_file)
+        cur = conn.cursor()
+
         list_type = prompts.ask_list_type()
 
         print()
@@ -94,10 +99,18 @@ def main():
         utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
 
         if list_type == constants.BLOCKLIST:
-            blocklists.manage_blocklists(db_file)
+            save = blocklists.manage_blocklists(cur)
 
         if list_type == constants.ALLOWLIST:
-            process_allowlists(db_file)
+            save = process_allowlists(db_file)
+
+        if not save:
+            conn.close()
+            utils.warn("\nNothing changed. Bye!")
+            sys.exit(0)
+
+        conn.commit()
+        conn.close()
 
         if prompts.confirm("Update Gravity for immediate effect?"):
             print()
@@ -120,6 +133,8 @@ def main():
             utils.info("\n\tBye!")
 
     except (KeyboardInterrupt, KeyError):
+        if conn:
+            conn.close()
         sys.exit(0)
 
 

@@ -1,6 +1,4 @@
 """ add/remove/reset blocklists """
-import sys
-import sqlite3
 import requests
 
 import prompts
@@ -30,7 +28,7 @@ blockLists = {
 }
 
 
-def manage_blocklists(db_file):
+def manage_blocklists(cur):
     """ what to do to blocklists """
     questions = [
         {
@@ -49,14 +47,18 @@ def manage_blocklists(db_file):
     result = prompts.key_prompt(questions)
     action = result["action"]
     if action == "add":
-        add(db_file)
-    elif action == "reset":
-        reset(db_file)
-    elif action == "empty":
+        return add(cur)
+
+    if action == "reset":
+        return reset(cur)
+
+    if action == "empty":
         print("Not implemented")
 
+    return False
 
-def reset(db_file):
+
+def reset(cur):
     """ reset block lists to pihole install default """
     utils.info("\nThis will replace ALL blocklists with these defaults:")
 
@@ -65,19 +67,18 @@ def reset(db_file):
     print()
 
     if prompts.confirm("Are you sure?", "n"):
-        conn = sqlite3.connect(db_file)
-        sqldb = conn.cursor()
-
-        sqldb.execute("DELETE FROM adlist")
+        cur.execute("DELETE FROM adlist")
         for url in DEFAULT_LISTS:
             vals = (url, "Pi-hole defaults")
-            sqldb.execute(
+            cur.execute(
                 "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
             )
-        conn.commit()
+        return True
+
+    return False
 
 
-def add(db_file):
+def add(cur):
     """ prompt for and process blocklists """
     source = prompts.ask_blocklist()
 
@@ -100,30 +101,24 @@ def add(db_file):
     if len(import_list) == 0:
         utils.die("No valid urls found, try again")
 
-    if not prompts.confirm(f"Add {len(import_list)} block lists to {db_file}?"):
-        utils.warn("Nothing changed. Bye!")
-        sys.exit(0)
+    if not prompts.confirm(f"Add {len(import_list)} block lists?"):
+        return False
 
-    conn = sqlite3.connect(db_file)
-    sqldb = conn.cursor()
     added = 0
     exists = 0
     for item in import_list:
-        sqldb.execute("SELECT COUNT(*) FROM adlist WHERE address = ?", (item["url"],))
+        cur.execute("SELECT COUNT(*) FROM adlist WHERE address = ?", (item["url"],))
 
-        cnt = sqldb.fetchone()
+        cnt = cur.fetchone()
 
         if cnt[0] > 0:
             exists += 1
         else:
             added += 1
             vals = (item["url"], item["comment"])
-            sqldb.execute(
+            cur.execute(
                 "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
             )
-            conn.commit()
-
-    sqldb.close()
-    conn.close()
 
     utils.success(f"{added} block lists added! {exists} already existed.")
+    return True
