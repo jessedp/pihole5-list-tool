@@ -3,11 +3,11 @@
 [![PyPI version](https://badge.fury.io/py/pihole5-list-tool.svg)](https://badge.fury.io/py/pihole5-list-tool)
 [![PyPI downloads](https://img.shields.io/pypi/dm/pihole5-list-tool)](https://pypi.org/project/pihole5-list-tool/)
 
-This tool provides bulk operations to manage your [Pi-hole 5](https://pi-hole.net/) __Allowlists__ and __Block/Ad lists__.
+This tool provides bulk operations to manage your [Pi-hole 5](https://pi-hole.net/) __Allow lists__ and __Block/Ad lists__.
 
 ## Features:
-  * __Ad/Block lists__ can be [added](#adblocklists) from [firebog.net](https://firebog.net/), files, or manual entry
   * __Allow lists__ can be [added](#allowlists) from [anudeepND's allowlist](https://github.com/anudeepND/whitelist), files, or manual entry
+  * __Block/Ad lists__ can be [added](#adblocklists) from [firebog.net](https://firebog.net/), files, or manual entry
   *  __Removes__ lists it adds (or all of them)
   *  __Reset__ lists to Pi-hole defaults
   *  __Stats__ provides some quick sums and groupings
