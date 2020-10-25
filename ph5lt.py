@@ -78,31 +78,37 @@ def main():
         conn.commit()
         conn.close()
 
-        if prompts.confirm("Update Gravity for immediate effect?"):
-            print()
-            if use_docker:
-                os.system('docker exec pihole bash "/usr/local/bin/pihole" "-g"')
-            else:
-                os.system("pihole -g")
-        else:
-            print()
-            if use_docker:
-                utils.info(
-                    "Update Gravity through the web interface or by running:\n\t"
-                    + '# docker exec pihole bash "/usr/local/bin/pihole" "-g"'
-                )
+        update_gravity(use_docker)
 
-            else:
-                utils.info(
-                    "Update Gravity through the web interface or by running:\n\t# pihole -g"
-                )
-
-            utils.info("\n\tBye!\n")
+        utils.info("\n\tBye!\n")
 
     except (KeyboardInterrupt, KeyError):
         if conn:
             conn.close()
         sys.exit(0)
+
+
+def update_gravity(use_docker):
+    """ various ways of updating the gravity db """
+
+    if prompts.confirm("Update Gravity for immediate effect?"):
+        print()
+        if use_docker:
+            os.system('docker exec pihole bash "/usr/local/bin/pihole" "-g"')
+        else:
+            os.system("pihole -g")
+    else:
+        print()
+        if use_docker:
+            utils.info(
+                "Update Gravity through the web interface or by running:\n\t"
+                + '# docker exec pihole bash "/usr/local/bin/pihole" "-g"'
+            )
+
+        else:
+            utils.info(
+                "Update Gravity through the web interface or by running:\n\t# pihole -g"
+            )
 
 
 if __name__ == "__main__":
