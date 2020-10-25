@@ -5,3 +5,4 @@ ansicolors
 twine
 pytest
 pytest-subprocess
+terminaltables
