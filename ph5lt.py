@@ -36,6 +36,7 @@ import allowlists
 import blocklists
 import utils
 import banner
+import stats
 
 
 def main():
@@ -61,6 +62,8 @@ def main():
         # ask_db validates the db, pass this connection round for easy access & "global" mgmt
         conn = sqlite3.connect(db_file)
         cur = conn.cursor()
+
+        stats.bar(cur)
 
         list_type = prompts.ask_list_type()
 
