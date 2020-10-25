@@ -60,6 +60,8 @@ def add(cur):
     """ prompt for and process allowlists """
     source = prompts.ask_allowlist()
 
+    utils.warn_long_running()
+
     import_list = []
 
     if source in whiteLists:

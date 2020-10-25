@@ -126,6 +126,16 @@ def clear():
         _ = os.system("clear")
 
 
+def warn_long_running():
+    """ display a warning so people don't hit enter and accept defaults all willy nilly """
+    danger(
+        """
+    Do not hit ENTER or Y if a step seems to hang!
+    Use CTRL+C if you're sure it's hung and report it.
+    """
+    )
+
+
 def warn(msg):
     """print styled WARNING messages"""
     print(color(msg, fg="yellow"))

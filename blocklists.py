@@ -67,6 +67,8 @@ def add(cur):
     """ prompt for and process blocklists """
     source = prompts.ask_blocklist()
 
+    utils.warn_long_running()
+
     import_list = []
 
     if source in blockLists:

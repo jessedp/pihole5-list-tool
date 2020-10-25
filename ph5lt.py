@@ -64,10 +64,6 @@ def main():
 
         list_type = prompts.ask_list_type()
 
-        print()
-        utils.danger("    Do not hit ENTER or Y if a step seems to hang!")
-        utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
-
         if list_type == constants.BLOCKLIST:
             save = blocklists.manage_blocklists(cur)
 
