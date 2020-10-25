@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 def version():
     """Return version string."""
-    with io.open("ph5lt.py") as input_file:
+    with io.open("banner.py") as input_file:
         for line in input_file:
             if line.startswith("__version__"):
                 return ast.parse(line).body[0].value.s
@@ -32,7 +32,16 @@ with io.open("README.md") as readme:
         ],
         keywords="pihole, pi-hole, blacklist, blocklist, whitelist, allowlist, adlist",
         python_requires=">=3.6",
-        install_requires=["PyInquirer", "ansicolors", "requests"],
-        py_modules=["ph5lt", "inquirer", "constants", "utils"],
+        install_requires=["PyInquirer", "ansicolors", "requests", "terminaltables"],
+        py_modules=[
+            "ph5lt",
+            "prompts",
+            "constants",
+            "utils",
+            "banner",
+            "allowlists",
+            "blocklists",
+            "stats",
+        ],
         entry_points={"console_scripts": ["pihole5-list-tool = ph5lt:main"]},
     )

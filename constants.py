@@ -3,6 +3,8 @@ DEFAULT_DB = "/etc/pihole/gravity.db"
 
 BLOCKLIST = 1
 ALLOWLIST = 2
+STATS = 3
+EXIT = 0
 
 # item types
 URL = 1

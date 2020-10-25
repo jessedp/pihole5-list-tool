@@ -24,243 +24,115 @@
 # SOFTWARE.
 
 
-"""Makes bulk adding DNS blocklists and allowlists to Pi-hole 5 a breaaze"""
-
+"""Makes bulk adding DNS blocklists and allowlists to Pi-hole 5 a breeze"""
 
 import os
 import sys
 import sqlite3
-import requests
-
-
-from colors import color
-
 
 import constants
-import inquirer
+import prompts
+import allowlists
+import blocklists
 import utils
-
-__version__ = "0.5.1"
-
-
-blockLists = {
-    constants.B_FIREBOG_NOCROSS: {
-        "url": "https://v.firebog.net/hosts/lists.php?type=nocross",
-        "comment": "Firebog | Non-crossed lists",
-    },
-    constants.B_FIREBOG_ALL: {
-        "url": "https://v.firebog.net/hosts/lists.php?type=all",
-        "comment": "Firebog | All lists",
-    },
-    constants.B_FIREBOG_TICKED: {
-        "url": "https://v.firebog.net/hosts/lists.php?type=tick",
-        "comment": "Firebog | Ticked lists",
-    },
-}
-
-ANUDEEP_ALLOWLIST = (
-    "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt"
-)
-whiteLists = {
-    constants.W_ANUDEEP_ALLOW: {
-        "url": ANUDEEP_ALLOWLIST,
-        "comment": "AndeepND | Allowlist Only",
-    },
-    constants.W_ANUDEEP_REFERRAL: {
-        "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/referral-sites.txt",
-        "comment": "AndeepND | Allowlist+Referral",
-    },
-    constants.W_ANUDEEP_OPTIONAL: {
-        "url": "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/optional-list.txt",
-        "comment": "AndeepND | Allowlist+Optional",
-    },
-}
+import banner
+import stats
 
 
 def main():
     """main method"""
+    conn = None
     try:
         utils.clear()
-        print(color("    ┌──────────────────────────────────────────┐", fg="#b61042"))
-        print(
-            color("    │       ", fg="#b61042")
-            + color(f"π-hole 5 list tool  v{__version__}", "#FFF")
-            + color("         │", fg="#b61042")
-        )
-        print(color("    └──────────────────────────────────────────┘", fg="#b61042"))
-        utils.info("    https://github.com/jessedp/pihole5-list-tool\n")
+        banner.display()
 
-        db_file = ""
         use_docker = False
         docker = utils.find_docker()
 
         if docker[0] is True:
-            utils.success(f"Found Running Docker config: {docker[1]}")
-            use_docker = inquirer.confirm("Use Docker-ized config?", "n")
+            utils.success(f"+ Found Running Docker config: {docker[1]}")
+            use_docker = prompts.confirm("Use Docker-ized config?", "n")
             if use_docker:
                 db_file = docker[1]
 
         if not use_docker:
-            db_file = inquirer.ask_db()
-
-        list_type = inquirer.ask_list_type()
-
-        print()
-        utils.danger("    Do not hit ENTER or Y if a step seems to hang!")
-        utils.danger("    Use CTRL+C if you're sure it's hung and report it.\n")
-
-        if list_type == constants.BLOCKLIST:
-            process_blocklists(db_file)
-
-        if list_type == constants.ALLOWLIST:
-            process_allowlists(db_file)
-
-        if inquirer.confirm("Update Gravity for immediate effect?"):
             print()
-            if use_docker:
-                os.system('docker exec pihole bash "/usr/local/bin/pihole" "-g"')
-            else:
-                os.system("pihole -g")
-        else:
-            if use_docker:
-                utils.info(
-                    "Update Gravity through the web interface or by running:\n\t"
-                    + '# docker exec pihole bash "/usr/local/bin/pihole" "-g"'
-                )
+            db_file = prompts.ask_db()
 
-            else:
-                utils.info(
-                    "Update Gravity through the web interface or by running:\n\t# pihole -g"
-                )
+        # ask_db validates the db, pass this connection round for easy access & "global" mgmt
+        conn = sqlite3.connect(db_file)
+        cur = conn.cursor()
 
-            utils.info("\n\tBye!")
+        default = constants.BLOCKLIST
+        option = ""
+        any_save = False
+        while option != constants.EXIT:
+            stats.stat_bar(cur)
+            option = prompts.main_menu(default)
+            save = False
+
+            if option == constants.BLOCKLIST:
+                save = blocklists.manage_blocklists(cur)
+
+            if option == constants.ALLOWLIST:
+                save = allowlists.manage_allowlists(cur)
+
+            if option == constants.STATS:
+                stats.header(cur)
+
+            if save:
+                any_save = True
+                default = constants.EXIT
+                conn.commit()
+                if option == constants.ALLOWLIST:
+                    stats.allow_header(cur)
+
+                if option == constants.BLOCKLIST:
+                    stats.block_header(cur)
+
+                if prompts.confirm("Are you finished?"):
+                    break
+
+        conn.close()
+        if any_save:
+            update_gravity(use_docker)
+
+        utils.info("\n\tBye!\n")
 
     except (KeyboardInterrupt, KeyError):
+        if conn:
+            conn.close()
         sys.exit(0)
 
 
-def process_blocklists(db_file):
-    """ prompt for and process blocklists """
-    source = inquirer.ask_blocklist()
+def update_gravity(use_docker):
+    """ various ways of updating the gravity db """
 
-    import_list = []
-
-    if source in blockLists:
-        url_source = blockLists[source]
-        resp = requests.get(url_source["url"])
-        import_list = utils.process_lines(resp.text, url_source["comment"])
-
-    if source == constants.FILE:
-        fname = inquirer.ask_import_file()
-        import_file = open(fname)
-        import_list = utils.process_lines(import_file.read(), f"File: {fname}")
-
-    if source == constants.PASTE:
-        import_list = inquirer.ask_paste()
-        import_list = utils.process_lines(import_list, "Pasted content")
-
-    if len(import_list) == 0:
-        utils.die("No valid urls found, try again")
-
-    if not inquirer.confirm(f"Add {len(import_list)} block lists to {db_file}?"):
-        utils.warn("Nothing changed. Bye!")
-        sys.exit(0)
-
-    conn = sqlite3.connect(db_file)
-    sqldb = conn.cursor()
-    added = 0
-    exists = 0
-    for item in import_list:
-        sqldb.execute("SELECT COUNT(*) FROM adlist WHERE address = ?", (item["url"],))
-
-        cnt = sqldb.fetchone()
-
-        if cnt[0] > 0:
-            exists += 1
+    if prompts.confirm("Update Gravity for immediate effect?"):
+        print()
+        if use_docker:
+            os.system('docker exec pihole bash "/usr/local/bin/pihole" "-g"')
         else:
-            added += 1
-            vals = (item["url"], item["comment"])
-            sqldb.execute(
-                "INSERT OR IGNORE INTO adlist (address, comment) VALUES (?,?)", vals
+            os.system("pihole -g")
+    else:
+        print()
+        if use_docker:
+            utils.info(
+                "Update Gravity through the web interface or by running:\n\t"
+                + '# docker exec pihole bash "/usr/local/bin/pihole" "-g"'
             )
-            conn.commit()
 
-    sqldb.close()
-    conn.close()
-
-    utils.success(f"{added} block lists added! {exists} already existed.")
-
-
-def process_allowlists(db_file):
-    """ prompt for and process allowlists """
-    source = inquirer.ask_allowlist()
-
-    import_list = []
-
-    if source in whiteLists:
-        url_source = whiteLists[source]
-        resp = requests.get(url_source["url"])
-        import_list = utils.process_lines(resp.text, url_source["comment"], False)
-        # This breaks if we add a new whitelist setup
-        if source != ANUDEEP_ALLOWLIST:
-            resp = requests.get(ANUDEEP_ALLOWLIST)
-            import_list += utils.process_lines(resp.text, url_source["comment"], False)
-
-    if source == constants.FILE:
-        fname = inquirer.ask_import_file()
-        import_file = open(fname)
-        import_list = utils.process_lines(import_file.read(), f"File: {fname}", False)
-
-    if source == constants.PASTE:
-        import_list = inquirer.ask_paste()
-        import_list = utils.process_lines(
-            import_list, "Pasted content", utils.validate_host
-        )
-
-    if len(import_list) == 0:
-        utils.die("No valid urls found, try again")
-
-    if not inquirer.confirm(f"Add {len(import_list)} white lists to {db_file}?"):
-        utils.warn("Nothing changed. Bye!")
-        sys.exit(0)
-
-    conn = sqlite3.connect(db_file)
-    sqldb = conn.cursor()
-    added = 0
-    exists = 0
-
-    for item in import_list:
-        sqldb.execute(
-            "SELECT COUNT(*) FROM domainlist WHERE domain = ?", (item["url"],)
-        )
-
-        cnt = sqldb.fetchone()
-
-        if cnt[0] > 0:
-            exists += 1
         else:
-            # 0 = exact whitelist
-            # 2 = regex whitelist
-            domain_type = 0
-            if item["type"] == constants.REGEX:
-                domain_type = 2
-
-            vals = (item["url"], domain_type, item["comment"])
-            sqldb.execute(
-                "INSERT OR IGNORE INTO domainlist (domain, type, comment) VALUES (?,?,?)",
-                vals,
+            utils.info(
+                "Update Gravity through the web interface or by running:\n\t# pihole -g"
             )
-            conn.commit()
-            added += 1
-
-    sqldb.close()
-    conn.close()
-
-    utils.success(f"{added} whitelists added! {exists} already existed.")
 
 
 if __name__ == "__main__":
     try:
         main()
+    except sqlite3.OperationalError as err:
+        utils.danger("\n\tDatabase error!")
+        utils.danger(f"\t{err}")
     except (KeyboardInterrupt, KeyError):
         sys.exit(0)
