@@ -33,6 +33,14 @@ with io.open("README.md") as readme:
         keywords="pihole, pi-hole, blacklist, blocklist, whitelist, allowlist, adlist",
         python_requires=">=3.6",
         install_requires=["PyInquirer", "ansicolors", "requests"],
-        py_modules=["ph5lt", "inquirer", "constants", "utils"],
+        py_modules=[
+            "ph5lt",
+            "prompts",
+            "constants",
+            "utils",
+            "banner",
+            "allowlists",
+            "blocklists",
+        ],
         entry_points={"console_scripts": ["pihole5-list-tool = ph5lt:main"]},
     )
