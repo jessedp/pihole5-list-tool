@@ -29,18 +29,13 @@
 import os
 import sys
 import sqlite3
-import requests
-
-from colors import color
-
 
 import constants
 import prompts
 import allowlists
 import blocklists
 import utils
-
-__version__ = "0.5.1"
+import banner
 
 
 def main():
@@ -48,16 +43,8 @@ def main():
     conn = None
     try:
         utils.clear()
-        print(color("    ┌──────────────────────────────────────────┐", fg="#b61042"))
-        print(
-            color("    │       ", fg="#b61042")
-            + color(f"π-hole 5 list tool  v{__version__}", "#FFF")
-            + color("         │", fg="#b61042")
-        )
-        print(color("    └──────────────────────────────────────────┘", fg="#b61042"))
-        utils.info("    https://github.com/jessedp/pihole5-list-tool\n")
+        banner.display()
 
-        db_file = ""
         use_docker = False
         docker = utils.find_docker()
 
@@ -71,7 +58,7 @@ def main():
             print()
             db_file = prompts.ask_db()
 
-        # ask_db validates the db, pass this connectoin around for easy access & "global" mgmt
+        # ask_db validates the db, pass this connection round for easy access & "global" mgmt
         conn = sqlite3.connect(db_file)
         cur = conn.cursor()
 

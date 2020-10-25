@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 def version():
     """Return version string."""
-    with io.open("ph5lt.py") as input_file:
+    with io.open("banner.py") as input_file:
         for line in input_file:
             if line.startswith("__version__"):
                 return ast.parse(line).body[0].value.s
