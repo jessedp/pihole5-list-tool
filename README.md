@@ -3,14 +3,46 @@
 [![PyPI version](https://badge.fury.io/py/pihole5-list-tool.svg)](https://badge.fury.io/py/pihole5-list-tool)
 [![PyPI downloads](https://img.shields.io/pypi/dm/pihole5-list-tool)](https://pypi.org/project/pihole5-list-tool/)
 
-This tool allows quickly and easily bulk adding and removing  both __Allowlists__ and __Block/Ad lists__ to/from your [Pi-hole 5](https://pi-hole.net/) setup.
+This tool provides bulk operations to manage your [Pi-hole 5](https://pi-hole.net/) __Allowlists__ and __Block/Ad lists__.
 
-_Bonus:_ If you're running the [pihole docker image](https://hub.docker.com/r/pihole/pihole/) (or one named _pihole_), it should be detected
-and offered as a default option.
+## Features:
+  * __Ad/Block lists__ can be [added](#adblocklists) from [firebog.net](https://firebog.net/), files, or manual entry
+  * __Allow lists__ can be [added](#allowlists) from [anudeepND's allowlist](https://github.com/anudeepND/whitelist), files, or manual entry
+  *  __Removes__ lists it adds (or all of them)
+  *  __Reset__ lists to Pi-hole defaults
+  *  __Stats__ provides some quick sums and groupings
+  *  __Docker__  if you're running the [pihole docker image](https://hub.docker.com/r/pihole/pihole/) (or one named `pihole`), it should be detected
+and offered as a default option
+
+## requirements
+
+* working [pi-hole 5+](https://pi-hole.net) installation
+* [python 3.6+](https://python.org/) _(available by default on Raspbian 10, probably available on your system)_
+
+## installation
+
+If you don't **sudo pip3 install**, things won't work - possibly in a very confusing way. Definitely on Raspbian 10, so probably before that.
+
+``` bash
+$ sudo pip3 install pihole5-list-tool --upgrade
+```
+
+## usage / running
+
+Simply run:
+
+``` bash
+$ sudo pihole5-list-tool
+```
+
+This is what installing and running it basically looks like (many features have been added since this):
+
+[![asciicast](https://asciinema.org/a/331296.svg)](https://asciinema.org/a/331296)
+
 
 ## supported sources
 
-*TL; DR* - some maintained lists and anything you can paste or a file
+*TL; DR* - some maintained online lists, anything you can paste, or a file
 
 ### allowlists
 
@@ -61,27 +93,3 @@ When that finishes, you'll see each of listed in the **Web Admin** interface alo
 
 **NOTE:** If you need/want the blocklists added from [firebog.net](https://firebog.net/) (and more) continually updated, check out [pihole-updatelists](https://github.com/jacklul/pihole-updatelists) which will also run great on a Pi.
 
-## requirements
-
-* working [pi-hole 5.0](https://pi-hole.net) installation
-* [python 3.6+](https://python.org/) is required. That is available by default on at least Raspbian 10, so it should be available on your system.
-
-## installation
-
-If you don't **sudo pip3 install**, things won't work - possibly in a very confusing way. Definitely on Raspbian 10, so probably before that.
-
-``` bash
-$ sudo pip3 install pihole5-list-tool --upgrade
-```
-
-## usage / running
-
-Simply run:
-
-``` bash
-$ sudo pihole5-list-tool
-```
-
-Here's basically what installing and running it will look like:
-
-[![asciicast](https://asciinema.org/a/331296.svg)](https://asciinema.org/a/331296)
