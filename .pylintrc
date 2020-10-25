@@ -139,7 +139,8 @@ disable=print-statement,
         deprecated-sys-function,
         exception-escape,
         comprehension-escape,
-        bad-continuation
+        bad-continuation,
+        duplicate-code
 
 
 # Enable the message, report, category or checker with the given id(s). You can
