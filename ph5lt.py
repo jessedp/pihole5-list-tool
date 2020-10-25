@@ -80,12 +80,13 @@ def main():
         docker = utils.find_docker()
 
         if docker[0] is True:
-            utils.success(f"Found Running Docker config: {docker[1]}")
+            utils.success(f"+ Found Running Docker config: {docker[1]}")
             use_docker = prompts.confirm("Use Docker-ized config?", "n")
             if use_docker:
                 db_file = docker[1]
 
         if not use_docker:
+            print()
             db_file = prompts.ask_db()
 
         # ask_db validates the db, pass this connectoin around for easy access & "global" mgmt

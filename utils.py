@@ -85,11 +85,11 @@ def find_docker():
             check=True,
         )
     except (CalledProcessError, FileNotFoundError):
-        warn("docker not found running, continuing...")
+        warn("! docker not found running, continuing...")
         return [False, None]
 
     if result.returncode != 0:
-        warn("docker pihole image not found running, continuing...")
+        warn("! docker pihole image not found running, continuing...")
         return [False, None]
 
     try:
@@ -102,7 +102,7 @@ def find_docker():
         or not config[0]["HostConfig"]
         or not config[0]["HostConfig"]["Binds"]
     ):
-        warn("unable to find config for running docker pihole image, continuing...")
+        warn("! unable to find config for running docker pihole image, continuing...")
         return [False, None]
 
     for row in config[0]["HostConfig"]["Binds"]:
@@ -112,7 +112,7 @@ def find_docker():
             if os.path.exists(path):
                 return [True, path]
 
-    warn("unable to find config for running docker pihole image, continuing...")
+    warn("! unable to find config for running docker pihole image, continuing...")
     return [False, result.stdout]
 
 
