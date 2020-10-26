@@ -2,7 +2,8 @@
 
 from terminaltables import AsciiTable, SingleTable
 from colors import color
-import utils
+
+from ph5lt import utils
 
 stats = {
     "total_adlist": "SELECT COUNT(*) FROM adlist",

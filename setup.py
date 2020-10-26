@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 def version():
     """Return version string."""
-    with io.open("banner.py") as input_file:
+    with io.open("ph5lt/banner.py") as input_file:
         for line in input_file:
             if line.startswith("__version__"):
                 return ast.parse(line).body[0].value.s
@@ -21,7 +21,8 @@ with io.open("README.md") as readme:
         long_description=readme.read(),
         long_description_content_type="text/markdown",
         package_dir="",
-        packages=find_packages(exclude=("tests", "tests.*")),
+        packages1=find_packages(exclude=("tests", "tests.*")),
+        packages=["ph5lt"],
         url="https://github.com/jessedp/pihole5-list-tool",
         classifiers=[
             "Programming Language :: Python :: 3",
@@ -30,10 +31,15 @@ with io.open("README.md") as readme:
             "Topic :: Utilities",
             "Topic :: Internet :: Name Service (DNS)",
         ],
+        project_urls={
+            "Bug Tracker": "https://github.com/jessedp/pihole5-list-tool/issues",
+            "Source Code": "https://github.com/jessedp/pihole5-list-tool",
+        },
         keywords="pihole, pi-hole, blacklist, blocklist, whitelist, allowlist, adlist",
         python_requires=">=3.6",
         install_requires=["PyInquirer", "ansicolors", "requests", "terminaltables"],
-        py_modules=[
+        packages2=["ph5lt"],
+        py_modules2=[
             "ph5lt",
             "prompts",
             "constants",
@@ -43,5 +49,5 @@ with io.open("README.md") as readme:
             "blocklists",
             "stats",
         ],
-        entry_points={"console_scripts": ["pihole5-list-tool = ph5lt:main"]},
+        entry_points={"console_scripts": ["pihole5-list-tool = ph5lt.app:main"]},
     )

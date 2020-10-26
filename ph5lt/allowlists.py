@@ -2,9 +2,9 @@
 import requests
 from PyInquirer import Separator
 
-import prompts
-import constants
-import utils
+from ph5lt import prompts
+from ph5lt import constants
+from ph5lt import utils
 
 ANUDEEP_ALLOWLIST = (
     "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt"

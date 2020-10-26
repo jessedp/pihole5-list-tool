@@ -2,8 +2,9 @@
 import os
 import sqlite3
 from PyInquirer import prompt, Validator, ValidationError, Separator
-import constants
-import utils
+
+from ph5lt import constants
+from ph5lt import utils
 
 
 def check_db(path):

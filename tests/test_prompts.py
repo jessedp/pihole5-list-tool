@@ -1,7 +1,8 @@
 import os
 import sqlite3
 from unittest.mock import patch
-import prompts
+
+from ph5lt import prompts
 
 
 @patch("os.path.exists")
