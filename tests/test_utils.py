@@ -1,9 +1,9 @@
-import utils
 import subprocess
 import os
 from subprocess import CalledProcessError
 from unittest.mock import patch
 
+from ph5lt import utils
 
 class TestUtils:
     def test_valid_url(self):

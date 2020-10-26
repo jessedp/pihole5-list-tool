@@ -18,7 +18,12 @@ lint:
 	pylint ph5lt
 
 test: clean-pyc lint
-	 python3 -m pytest
+	coverage run -m pytest
+	# coverage report --include=ph5lt\/*
+	#  python3 -m pytest
+
+covreport: 
+	coverage report --include=ph5lt\/* -m
 
 run:
 	python3 ph5lt/app.py
