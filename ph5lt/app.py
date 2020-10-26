@@ -30,13 +30,13 @@ import os
 import sys
 import sqlite3
 
-import constants
-import prompts
-import allowlists
-import blocklists
-import utils
-import banner
-import stats
+from ph5lt import constants
+from ph5lt import prompts
+from ph5lt import allowlists
+from ph5lt import blocklists
+from ph5lt import utils
+from ph5lt import banner
+from ph5lt import stats
 
 
 def main():

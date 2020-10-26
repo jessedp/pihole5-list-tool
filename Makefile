@@ -14,14 +14,14 @@ build: clean-build lint
 	
 
 lint:
-	black --target-version py36 .
-	pylint *.py
+	black --target-version py36 ph5lt
+	pylint ph5lt
 
 test: clean-pyc lint
 	 python3 -m pytest
 
 run:
-	python3 ph5lt.py
+	python3 ph5lt/app.py
 
 update:
 	python3 -m pip install --user --upgrade setuptools wheel
@@ -32,6 +32,11 @@ package: build
 publishTest: package
 	python3 -m twine upload --repository testpypi dist/* 
 
+installTest:
+	pip3 install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pihole5-list-tool --upgrade
+
+uninstall:
+	pip3 uninstall pihole5-list-tool
 
 publish: package
 	python3 -m twine upload dist/* 

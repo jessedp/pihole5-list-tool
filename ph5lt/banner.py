@@ -1,9 +1,10 @@
 """ silly ansi banner"""
 
 from colors import color
-import utils
 
-__version__ = "0.6.0"
+from ph5lt import utils
+
+__version__ = "0.6.3"
 
 
 def display():

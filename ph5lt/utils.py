@@ -8,7 +8,8 @@ import json
 from urllib.parse import urlparse
 from json.decoder import JSONDecodeError
 from colors import color
-import constants
+
+from ph5lt import constants
 
 
 def valid_url(url):
