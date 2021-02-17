@@ -17,15 +17,16 @@ and offered as a default option
 ## requirements
 
 * working [pi-hole 5+](https://pi-hole.net) installation
-* [python 3.6+](https://python.org/) _(available by default on Raspbian 10, probably available on your system)_
+* [python 3.6+](https://python.org/) (available by default on Raspbian 10, probably available on your system)
 
 ## installation
-
-If you don't **sudo pip3 install**, things won't work - possibly in a very confusing way. Definitely on Raspbian 10, so probably before that.
 
 ``` bash
 $ sudo pip3 install pihole5-list-tool --upgrade
 ```
+_Note:_
+* If the `pip3` command doesn't work, try using `pip`  instead. Here are additional [options /workarounds](https://stackoverflow.com/questions/40832533/pip-or-pip3-to-install-packages-for-python-3) (and glimpses into Python peculiarities)
+* You __must__ use `sudo`
 
 ## usage / running
 
