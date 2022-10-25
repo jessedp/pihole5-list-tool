@@ -6,3 +6,5 @@ twine
 pytest
 pytest-subprocess
 terminaltables
+wheel
+pylint
