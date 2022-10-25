@@ -86,13 +86,13 @@ def add(cur):
 
     if source in blockLists:
         url_source = blockLists[source]
-        resp = requests.get(url_source["url"])
+        resp = requests.get(url=url_source["url"], timeout=15)  # 15 seconds
         import_list = utils.process_lines(resp.text, url_source["comment"])
 
     if source == constants.FILE:
         fname = prompts.ask_import_file()
-        import_file = open(fname)
-        import_list = utils.process_lines(import_file.read(), f"File: {fname}")
+        with open(fname, encoding="utf-8") as import_file:
+            import_list = utils.process_lines(import_file.read(), f"File: {fname}")
 
     if source == constants.PASTE:
         import_list = prompts.ask_paste()

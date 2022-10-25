@@ -106,7 +106,7 @@ def main():
 
 
 def update_gravity(use_docker):
-    """ various ways of updating the gravity db """
+    """various ways of updating the gravity db"""
 
     if prompts.confirm("Update Gravity for immediate effect?"):
         print()

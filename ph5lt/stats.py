@@ -28,7 +28,7 @@ stats = {
 
 
 def get(cur, name):
-    """ get stats using prebuilt statements """
+    """get stats using prebuilt statements"""
     if name not in stats:
         return -1
     cur.execute(stats[name])
@@ -36,21 +36,21 @@ def get(cur, name):
 
 
 def adlist_top3_by_comment(cur):
-    """ top 3 adlists by comment """
+    """top 3 adlists by comment"""
     sql = "SELECT comment, count(*) FROM adlist GROUP BY comment LIMIT 3"
     cur.execute(sql)
     return cur.fetchall()
 
 
 def allow_top3_by_comment(cur):
-    """ top 3 allow lists by comment """
+    """top 3 allow lists by comment"""
     sql = "SELECT comment, count(*) FROM domainlist WHERE type IN (0,2) GROUP BY comment LIMIT 3"
     cur.execute(sql)
     return cur.fetchall()
 
 
 def stat_bar(cur):
-    """ one-liner stat bar """
+    """one-liner stat bar"""
     # Block : All=X  Ours=Y Oth=Z   |  Allow : All=X Ours=Y Oth=Z
     data = []
 
@@ -81,7 +81,7 @@ def stat_bar(cur):
 
 
 def header(cur):
-    """ a stats overview header """
+    """a stats overview header"""
     print()
     block_header(cur)
     # utils.info("──────────────────────────────────────────────────────────────")
@@ -91,7 +91,7 @@ def header(cur):
 
 
 def allow_header(cur):
-    """ allow portion of header """
+    """allow portion of header"""
 
     block_data = [
         [
@@ -136,7 +136,7 @@ def allow_header(cur):
 
 
 def block_header(cur):
-    """ block portion of header """
+    """block portion of header"""
 
     block_data = [
         [

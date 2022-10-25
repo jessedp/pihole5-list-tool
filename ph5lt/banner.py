@@ -8,7 +8,7 @@ __version__ = "0.6.0"
 
 
 def display():
-    """ duisplay the banner """
+    """display the banner"""
     print(color("    ┌──────────────────────────────────────────┐", fg="#b61042"))
     print(
         color("    │       ", fg="#b61042")

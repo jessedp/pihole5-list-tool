@@ -75,17 +75,19 @@ def add(cur):
 
     if source in whiteLists:
         url_source = whiteLists[source]
-        resp = requests.get(url_source["url"])
+        resp = requests.get(url=url_source["url"], timeout=15)  # 15 seconds
         import_list = utils.process_lines(resp.text, url_source["comment"], False)
         # This breaks if we add a new whitelist setup
         if source != ANUDEEP_ALLOWLIST:
-            resp = requests.get(ANUDEEP_ALLOWLIST)
+            resp = requests.get(url=ANUDEEP_ALLOWLIST, timeout=15)
             import_list += utils.process_lines(resp.text, url_source["comment"], False)
 
     if source == constants.FILE:
         fname = prompts.ask_import_file()
-        import_file = open(fname)
-        import_list = utils.process_lines(import_file.read(), f"File: {fname}", False)
+        with open(fname, encoding="utf-8") as import_file:
+            import_list = utils.process_lines(
+                import_file.read(), f"File: {fname}", False
+            )
 
     if source == constants.PASTE:
         import_list = prompts.ask_paste()

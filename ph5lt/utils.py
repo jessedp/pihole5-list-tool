@@ -19,13 +19,13 @@ def valid_url(url):
 
 
 def validate_host(value):
-    """ Make sure we at least have "site.com" and the TLD is long enough"""
+    """Make sure we at least have "site.com" and the TLD is long enough"""
     parts = value.split(".")
     return len(parts) > 1 and len(parts[len(parts) - 1]) > 1
 
 
 def validate_regex(value):
-    """ see if we have a valid regex """
+    """see if we have a valid regex"""
     try:
         re.compile(value)
         return True
@@ -76,7 +76,7 @@ def process_lines(data, comment, full_url_only=True):
 
 
 def find_docker():
-    """ try to find a running docker image and its config """
+    """try to find a running docker image and its config"""
     # return [True, '/etc/pihole/gravity.db']
     try:
         result = subprocess.run(
@@ -118,7 +118,7 @@ def find_docker():
 
 
 def clear():
-    """ helperto clear screen """
+    """helperto clear screen"""
     # for windows
     if os.name == "nt":
         _ = os.system("cls")
@@ -128,7 +128,7 @@ def clear():
 
 
 def warn_long_running():
-    """ display a warning so people don't hit enter and accept defaults all willy nilly """
+    """display a warning so people don't hit enter and accept defaults all willy nilly"""
     danger(
         """
     Do not hit ENTER or Y if a step seems to hang!
