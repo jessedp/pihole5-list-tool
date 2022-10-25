@@ -1,5 +1,5 @@
 requests
-PyInquirer
+InquirerPy
 black
 ansicolors
 twine

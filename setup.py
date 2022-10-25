@@ -36,8 +36,8 @@ with io.open("README.md") as readme:
             "Source Code": "https://github.com/jessedp/pihole5-list-tool",
         },
         keywords="pihole, pi-hole, blacklist, blocklist, whitelist, allowlist, adlist",
-        python_requires=">=3.6",
-        install_requires=["PyInquirer", "ansicolors", "requests", "terminaltables"],
+        python_requires=">=3.7",
+        install_requires=["InquirerPy", "ansicolors", "requests", "terminaltables"],
         packages2=["ph5lt"],
         py_modules2=[
             "ph5lt",

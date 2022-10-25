@@ -1,14 +1,16 @@
 """ prompts for inquirer """
 import os
 import sqlite3
-from PyInquirer import prompt, Validator, ValidationError, Separator
+from InquirerPy import prompt
+from InquirerPy.separator import Separator
+from prompt_toolkit.validation import ValidationError, Validator
 
 from ph5lt import constants
 from ph5lt import utils
 
 
 def check_db(path):
-    """ validate we have a good file """
+    """validate we have a good file"""
     if not os.path.exists(path):
         utils.warn(" DOES NOT EXIST!")
         return False
@@ -39,7 +41,7 @@ class ValidateEditor(Validator):
 
 
 def key_prompt(questions):
-    """ prompt wrapper to handle ctrl+c """
+    """prompt wrapper to handle ctrl+c"""
     resp = prompt(questions)
     if len(resp) != len(questions):
         raise KeyboardInterrupt
@@ -47,7 +49,7 @@ def key_prompt(questions):
 
 
 def ask_db():
-    """ prompt for gravity db file """
+    """prompt for gravity db file"""
     questions = [
         {
             "name": "gravitydb",
@@ -64,7 +66,7 @@ def ask_db():
 
 
 def main_menu(default=constants.BLOCKLIST):
-    """ prompt for allow/block list """
+    """prompt for allow/block list"""
     questions = [
         {
             "name": "main",
@@ -87,7 +89,11 @@ def main_menu(default=constants.BLOCKLIST):
                     "value": constants.STATS,
                     "short": "Full Stats",
                 },
-                {"name": "Exit", "value": constants.EXIT, "short": "Exit",},
+                {
+                    "name": "Exit",
+                    "value": constants.EXIT,
+                    "short": "Exit",
+                },
             ],
         }
     ]
@@ -97,7 +103,7 @@ def main_menu(default=constants.BLOCKLIST):
 
 
 def ask_blocklist():
-    """ prompt for which blocklist to use """
+    """prompt for which blocklist to use"""
     questions = [
         {
             "name": "source",
@@ -142,7 +148,7 @@ def ask_blocklist():
 
 
 def ask_allowlist():
-    """ prompt for which allow to use """
+    """prompt for which allow to use"""
     questions = [
         {
             "name": "source",
@@ -197,7 +203,7 @@ def ask_allowlist():
 
 
 def ask_import_file():
-    """ prompt for file to import from """
+    """prompt for file to import from"""
     questions = [
         {
             "name": "file",
@@ -213,7 +219,7 @@ def ask_import_file():
 
 
 def ask_paste():
-    """ prompt for acquiring pasted list """
+    """prompt for acquiring pasted list"""
     questions = [
         {
             "name": "content",
@@ -229,7 +235,7 @@ def ask_paste():
 
 
 def confirm(message, default="y"):
-    """ generic y/n confirm prompt """
+    """generic y/n confirm prompt"""
     questions = [
         {
             "name": "confirm",

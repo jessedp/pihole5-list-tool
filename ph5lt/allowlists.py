@@ -1,6 +1,6 @@
 """ add/remove/reset blocklists """
 import requests
-from PyInquirer import Separator
+from InquirerPy.separator import Separator
 
 from ph5lt import prompts
 from ph5lt import constants
@@ -26,7 +26,7 @@ whiteLists = {
 
 
 def manage_allowlists(cur):
-    """ what to do to allowlists """
+    """what to do to allowlists"""
     questions = [
         {
             "name": "action",
@@ -34,10 +34,19 @@ def manage_allowlists(cur):
             "default": "add",
             "message": "Allowlist action:",
             "choices": [
-                {"name": "Add a list", "value": "add",},
+                {
+                    "name": "Add a list",
+                    "value": "add",
+                },
                 Separator(),
-                {"name": "Remove Lists Added by This Tool", "value": "remove",},
-                {"name": "Remove ALL Allowlists", "value": "empty",},
+                {
+                    "name": "Remove Lists Added by This Tool",
+                    "value": "remove",
+                },
+                {
+                    "name": "Remove ALL Allowlists",
+                    "value": "empty",
+                },
             ],
         }
     ]
@@ -57,7 +66,7 @@ def manage_allowlists(cur):
 
 
 def add(cur):
-    """ prompt for and process allowlists """
+    """prompt for and process allowlists"""
     source = prompts.ask_allowlist()
 
     utils.warn_long_running()
@@ -118,7 +127,7 @@ def add(cur):
 
 
 def empty(cur):
-    """ remove all block lists"""
+    """remove all block lists"""
     utils.danger(
         """
     This will REMOVE ALL manually added allowlists!
@@ -135,7 +144,7 @@ def empty(cur):
 
 ##### Deal with my sloppiness...
 def remove(cur):
-    """ remove lists we added """
+    """remove lists we added"""
 
     utils.info(
         """

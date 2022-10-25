@@ -1,6 +1,7 @@
 """ add/remove/reset blocklists """
 import requests
-from PyInquirer import Separator
+from InquirerPy.separator import Separator
+
 
 from ph5lt import prompts
 from ph5lt import constants
@@ -29,7 +30,7 @@ blockLists = {
 
 
 def manage_blocklists(cur):
-    """ what to do to blocklists """
+    """what to do to blocklists"""
     questions = [
         {
             "name": "action",
@@ -37,11 +38,23 @@ def manage_blocklists(cur):
             "default": "add",
             "message": "Blocklist action:",
             "choices": [
-                {"name": "Add a list", "value": "add",},
+                {
+                    "name": "Add a list",
+                    "value": "add",
+                },
                 Separator(),
-                {"name": "Remove Lists Added by This Tool", "value": "remove",},
-                {"name": "Reset to Pihole defaults", "value": "reset",},
-                {"name": "Remove ALL Blocklists", "value": "empty",},
+                {
+                    "name": "Remove Lists Added by This Tool",
+                    "value": "remove",
+                },
+                {
+                    "name": "Reset to Pihole defaults",
+                    "value": "reset",
+                },
+                {
+                    "name": "Remove ALL Blocklists",
+                    "value": "empty",
+                },
             ],
         }
     ]
@@ -64,7 +77,7 @@ def manage_blocklists(cur):
 
 
 def add(cur):
-    """ prompt for and process blocklists """
+    """prompt for and process blocklists"""
     source = prompts.ask_blocklist()
 
     utils.warn_long_running()
@@ -112,7 +125,7 @@ def add(cur):
 
 
 def reset(cur):
-    """ reset block lists to pihole install default """
+    """reset block lists to pihole install default"""
     utils.info("\nThis will replace ALL blocklists with these defaults:")
 
     for url in DEFAULT_LISTS:
@@ -132,7 +145,7 @@ def reset(cur):
 
 
 def empty(cur):
-    """ remove all block lists"""
+    """remove all block lists"""
     utils.danger("\n\tThis will REMOVE ALL blocklists!\n")
 
     if prompts.confirm("Are you sure?", "n"):
@@ -144,7 +157,7 @@ def empty(cur):
 
 ##### Deal with my sloppiness...
 def remove(cur):
-    """ remove lists we added """
+    """remove lists we added"""
 
     utils.info(
         """
