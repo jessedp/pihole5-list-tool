@@ -14,7 +14,7 @@ build: clean-build lint
 	
 
 lint:
-	black --target-version py36 ph5lt
+	black --target-version py37 ph5lt
 	pylint ph5lt
 
 test: clean-pyc lint
@@ -26,7 +26,7 @@ covreport:
 	coverage report --include=ph5lt\/* -m
 
 run:
-	python3 ph5lt/app.py
+	python3 -m ph5lt
 
 update:
 	python3 -m pip install --user --upgrade setuptools wheel
