@@ -3,7 +3,6 @@ import os
 import sqlite3
 from InquirerPy import prompt
 from InquirerPy.separator import Separator
-from prompt_toolkit.validation import ValidationError, Validator
 
 from ph5lt import constants
 from ph5lt import utils
