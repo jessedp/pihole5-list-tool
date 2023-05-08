@@ -30,16 +30,6 @@ def check_db(path):
     return True
 
 
-class ValidateEditor(Validator):
-    """Class to validator "editor" types since that's broken in current PyInquirer"""
-
-    def validate(self, document):
-        if document.text and len(document.text.split("\n")) <= 1:
-            raise ValidationError(
-                message="Must be at least 1 line", cursor_position=len(document.text)
-            )
-
-
 def key_prompt(questions):
     """prompt wrapper to handle ctrl+c"""
     resp = prompt(questions)
@@ -223,11 +213,10 @@ def ask_paste():
     questions = [
         {
             "name": "content",
-            "type": "editor",
-            "message": "Opening editor",
-            # lambda text: len(text.split('\n')) >= 1 or 'Must be at least 1 line',
-            "validate": ValidateEditor,
-            "eargs": {"editor": "default", "ext": ".tmp"},
+            "type": "input",
+            "message": "Please Paste your of URLS, then:",
+            "multiline": True,
+            "instruction": "ESC + Enter to continue",
         }
     ]
     result = key_prompt(questions)
