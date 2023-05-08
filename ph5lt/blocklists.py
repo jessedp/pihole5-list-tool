@@ -99,7 +99,8 @@ def add(cur):
         import_list = utils.process_lines(import_list, "Pasted content")
 
     if len(import_list) == 0:
-        utils.die("No valid urls found, try again")
+        utils.warn("No valid urls found, try again")
+        return False
 
     if not prompts.confirm(f"Add {len(import_list)} block lists?"):
         return False
