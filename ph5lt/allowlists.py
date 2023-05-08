@@ -96,7 +96,8 @@ def add(cur):
         )
 
     if len(import_list) == 0:
-        utils.die("No valid urls found, try again")
+        utils.warn("No valid urls found, try again")
+        return False
 
     if not prompts.confirm(f"Add {len(import_list)} white lists?"):
         return False

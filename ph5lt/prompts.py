@@ -3,7 +3,6 @@ import os
 import sqlite3
 from InquirerPy import prompt
 from InquirerPy.separator import Separator
-from prompt_toolkit.validation import ValidationError, Validator
 
 from ph5lt import constants
 from ph5lt import utils
@@ -28,16 +27,6 @@ def check_db(path):
         utils.warn(" IS NOT A PI-HOLE GRAVITY DB!")
         return False
     return True
-
-
-class ValidateEditor(Validator):
-    """Class to validator "editor" types since that's broken in current PyInquirer"""
-
-    def validate(self, document):
-        if document.text and len(document.text.split("\n")) <= 1:
-            raise ValidationError(
-                message="Must be at least 1 line", cursor_position=len(document.text)
-            )
 
 
 def key_prompt(questions):
@@ -223,11 +212,10 @@ def ask_paste():
     questions = [
         {
             "name": "content",
-            "type": "editor",
-            "message": "Opening editor",
-            # lambda text: len(text.split('\n')) >= 1 or 'Must be at least 1 line',
-            "validate": ValidateEditor,
-            "eargs": {"editor": "default", "ext": ".tmp"},
+            "type": "input",
+            "message": "Please Paste your of URLS, then:",
+            "multiline": True,
+            "instruction": "ESC + Enter to continue",
         }
     ]
     result = key_prompt(questions)
