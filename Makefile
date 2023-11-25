@@ -9,43 +9,44 @@ clean-build:
 	rm --force --recursive __pycache__/
 	rm --force --recursive *.egg-info
 
-build: clean-build lint
-	# pyi-makespec  --onefile pihole5-list-tool.py
-	
-
 lint:
-	black --target-version py37 ph5lt
-	pylint ph5lt
+	poetry run black --target-version py37 ph5lt
+	poetry run pylint ph5lt
 
 test: clean-pyc lint
-	coverage run -m pytest
+	poetry run coverage run -m pytest
 	# coverage report --include=ph5lt\/*
 	#  python3 -m pytest
 
 covreport: 
-	coverage report --include=ph5lt\/* -m
+	poetry run coverage report --include=ph5lt\/* -m
 
 run:
-	python3 -m ph5lt
+	poetry run  python3 -m ph5lt
 
 update:
-	python3 -m pip install --user --upgrade setuptools wheel
+	poetry update
+
+build: clean-build lint
+	poetry build
 
 package: build
-	python3 setup.py sdist bdist_wheel
+	poetry build
 
 publishTest: package
-	python3 -m twine upload --repository testpypi dist/* 
+	poetry publish -r testpypi
 
+# run outside of the venv/poetry
 installTest:
 	pip3 install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pihole5-list-tool --upgrade
 
+# run outside of the venv/poetry
 uninstall:
 	pip3 uninstall pihole5-list-tool
 
 publish: package
-	python3 -m twine upload dist/* 
+	poetry publish
 
 reqs:
-	pip3 install -r requirements.txt
+	poetry install
 
