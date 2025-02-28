@@ -51,24 +51,11 @@ _TL; DR_ - some maintained online lists, anything you can paste, or a file
 
 Currently the only source for maintained whitelists is [anudeepND's allowlist](https://github.com/anudeepND/whitelist). They are presented as:
 
-- **Allowlist Only** - Domains that are safe to allow i.e does not contain any tracking or
+- **Allowlist Only** - Domains that are safe to allow i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, videos on news sites and so on.
 
-        advertising sites. This fixes many problems like YouTube watch history,
-        videos on news sites and so on.
+- **Allowlist+Optional** - These are needed depending on the service you use. They may contain some tracking sites but sometimes it's necessary to add bad domains to make a few services to work.
 
-- **Allowlist+Optional** - These are needed depending on the service you use. They may contain some
-
-        tracking sites but sometimes it's necessary to add bad domains to make a
-        few services to work.
-
-- **Allowlist+Referral** - People who use services like Slickdeals and Fatwallet need a few sites
-
-        (most of them are either trackers or ads) to be whitelisted to work
-        properly. This contains some analytics and ad serving sites like
-        doubleclick.net and others. If you don't know what these services are,
-        stay away from this list. Domains that are safe to whitelist i.e does
-        not contain any tracking or advertising sites. This fixes many problems
-        like YouTube watch history, videos on news sites and so on.
+- **Allowlist+Referral** - People who use services like Slickdeals and Fatwallet need a few sites (most of them are either trackers or ads) to be whitelisted to work properly. This contains some analytics and ad serving sites like doubleclick.net and others. If you don't know what these services are, stay away from this list. Domains that are safe to whitelist i.e does not contain any tracking or advertising sites. This fixes many problems like YouTube watch history, videos on news sites and so on.
 
 ### ad/blocklists
 
